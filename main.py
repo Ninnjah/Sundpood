@@ -62,17 +62,7 @@ def sound_get(filename, mode):              # Сбор файлов
             exit()
     return sounds_list
 
-def play_sound(index):                      # Проигрываение звука
-    #filename = sound_get('settings.json', False)[1][index]
-    filename = COMBOS[index].currentText()
-    try:
-        data, fs = sf.read(os.path.join('sound', filename), dtype='float32')  
-        sd.play(data, fs)
-        sd.wait()
-    except:
-        pass
-
-def start():
+def save():                                 # Сохранение списка хоткеев
     hotkeys = []
     sounds = sound_get('settings.json', False)
     for i in COMBOS:
@@ -81,10 +71,23 @@ def start():
     sounds = None
     hotkeys = None
 
+#def sounds_explore():                       # Оверлей
+#    print('showing everlay')
+#    overlay.show()
 
+def play_sound(index):                      # Проигрываение звука
+    filename = COMBOS[index].currentText()
+    try:
+        data, fs = sf.read(os.path.join('sound', filename), dtype='float32')  
+        sd.play(data, fs)
+        keyboard.wait(sd.play())
+        sd.wait()
+    except:
+        pass
 
 ###! CONTROL !###
-def key(arg):                                  # Хоткеи
+
+def key(arg):                               # Хоткеи
     keyboard.add_hotkey('f1', play_sound, args=[0])
     keyboard.add_hotkey('f2', play_sound, args=[1])
     keyboard.add_hotkey('f3', play_sound, args=[2])
@@ -97,12 +100,14 @@ def key(arg):                                  # Хоткеи
     keyboard.add_hotkey('f10', play_sound, args=[9])
     keyboard.add_hotkey('f11', play_sound, args=[10])
     keyboard.add_hotkey('f12', play_sound, args=[11])
-    keyboard.wait(hotkey='alt+x')
+    keyboard.add_hotkey(73, sd.stop)
+    #keyboard.add_hotkey('shift+f2', sounds_explore)
+    keyboard.wait()
     main()
 
 def main():                                 # Интерфейс
-    win.show()
     win.start_button.setText('Save')
+    win.show()
     sounds = sound_get('settings.json', True)[1]
 
     combo = 0
@@ -114,7 +119,7 @@ def main():                                 # Интерфейс
     x = threading.Thread(target=key, args=(1,))
     x.setDaemon(True)
     x.start()
-    win.start_button.clicked.connect(start)
+    win.start_button.clicked.connect(save)
 
 
 if __name__ == '__main__':
@@ -125,6 +130,8 @@ if __name__ == '__main__':
 
     app = QtWidgets.QApplication([])
     win = uic.loadUi("sundpood.ui")
+    #overlay = uic.loadUi("overlay.ui")
+    #overlay.setWindowFlags(QtCore.Qt.ToolTip)
 
     COMBOS = [
         win.combo0,
