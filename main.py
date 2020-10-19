@@ -50,10 +50,6 @@ def found_device(list_):                    # Поиск микшера VoiceMee
     return index
 
 def sound_get(mode):              # Сбор файлов
-    MUSIC = ['Music']
-    MEME = ['Meme']
-    OTHER = ['Other']
-    CATS = [MUSIC, MEME, OTHER]
 
     if os.path.exists('settings.json') and mode == False:
         sounds_list = jsonread('settings.json')
@@ -72,35 +68,40 @@ def sound_get(mode):              # Сбор файлов
                 msg.exec_()
                 exit()
 
+            menu = []
+            sounds_list = ['sound\\']
             for i in os.listdir('sound'):                # Коонвертируем файлы в .wav
+                print(f'i = {i}')
+                print(os.path.join(os.getcwd(), 'sound', i))
                 name = i
                 format_ = ''
-                while i[-1] != '.':
-                    format_ += i[-1]
-                    i = i[:-1]
-                format_ = format_[::-1]
-                if format_ in ['mp3', 'm4a']:
-                    os.system(f'ffmpeg.exe -i "sound\\{name}" "sound\\{i}wav"')
-                    os.remove(f'sound\\{name}')
-            
-            sounds = os.listdir('sound')
-            for i in sounds:                # Ищем ключевые слова в названиях песен
-                tag = ''
-                for x in i:
-                    if x not in [' ', '.', '-', '_']:
-                        tag += x
-                    else:
-                        break
-                if tag.lower() == 'music':
-                    MUSIC.append(i)
-                elif tag.lower() == 'meme':
-                    MEME.append(i)
+                if os.path.isfile(os.path.join('sound', i)):
+                    while i[-1] != '.':
+                        format_ += i[-1]
+                        i = i[:-1]
+                    format_ = format_[::-1]
+                    if format_ in ['mp3', 'm4a']:
+                        os.system(f'ffmpeg.exe -i "sound\\{name}" "sound\\{i}wav"')
+                        os.remove(f'sound\\{name}')
+                    sounds_list.append(name)
                 else:
-                    OTHER.append(i)
-            
-            menu = []
-            for i in CATS:
-                menu.append(i)
+                    sounds_list_cat = [os.path.join('sound', i)]
+                    for x in os.listdir(os.path.join('sound', i)):                # Коонвертируем файлы в .wav
+                        print(f'x = {x}')
+                        print(os.path.join('sound', i, x))
+                        name = x
+                        format_ = ''
+                        if os.path.isfile(os.path.join('sound', i, x)):
+                            while x[-1] != '.':
+                                format_ += x[-1]
+                                x = x[:-1]
+                            format_ = format_[::-1]
+                            if format_ in ['mp3', 'm4a']:
+                                os.system(f'ffmpeg.exe -i "sound\\{os.path.join(i, name)}" "sound\\{os.path.join(i, x)}wav"')
+                                os.remove(f'sound\\{os.path.join(i, name)}')
+                            sounds_list_cat.append(name)
+                    menu.append(sounds_list_cat)
+            menu.append(sounds_list)
 
             if os.path.exists('settings.json'):
                 hotkeys = jsonread('settings.json')[1]
@@ -126,12 +127,14 @@ def save():                                 # Сохранение списка 
     hotkeys = None
 
 def play_sound(index):                      # Проигрываение звука
+    print(select[0], select[1])
     try:
         filename = COMBOS[index].currentText()
     except:
-        filename = index
+        filename = menu[select[0]][select[1]]
+        print(filename)
     try:
-        data, fs = sf.read(os.path.join('sound', filename), dtype='float32')  
+        data, fs = sf.read(os.path.join(menu[select[0]][0], filename), dtype='float32')  
         sd.play(data, fs)
         keyboard.wait(sd.play())
         sd.wait()
@@ -142,8 +145,6 @@ def play_sound(index):                      # Проигрываение зву�
 ###! CONTROL !###
 def key(arg):                               # Хоткеи
     
-    select = [0, 0]
-    
     def select_move(mode):
         select[1] += mode[1]
         select[0] += mode[0]
@@ -151,7 +152,7 @@ def key(arg):                               # Хоткеи
             select[0] = 0
         if select[1] > len(menu[select[0]])-1 or select[1] < -len(menu[select[0]])+1:
             select[1] = 0
-        if mode[0] > 0:
+        if mode[0] != 0:
             select[1] = 0
         over.label.setText(menu[select[0]][select[1]])
         win.select_label.setText(menu[select[0]][select[1]])
@@ -172,7 +173,7 @@ def key(arg):                               # Хоткеи
     keyboard.add_hotkey(80, select_move, args=[[0, 1]])
     keyboard.add_hotkey(77, select_move, args=[[1, 0]])
     keyboard.add_hotkey(75, select_move, args=[[-1, 0]])
-    keyboard.add_hotkey(76, play_sound, args=[menu[select[0]][select[1]]])
+    keyboard.add_hotkey(76, play_sound, args=[''])
     keyboard.add_hotkey(73, sd.stop)
 
 def main():                                 # Интерфейс
@@ -201,6 +202,7 @@ if __name__ == '__main__':
     win = MainUi()
     win.show()
 
+    select = [0, 0]
     COMBOS = [
         win.combo0,
         win.combo1,
