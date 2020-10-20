@@ -127,19 +127,24 @@ def save():                                 # Сохранение списка 
     hotkeys = None
 
 def play_sound(index):                      # Проигрываение звука
-    print(select[0], select[1])
     try:
         filename = COMBOS[index].currentText()
+        try:
+            data, fs = sf.read(os.path.join('sound', filename), dtype='float32')  
+            sd.play(data, fs)
+            keyboard.wait(sd.play())
+            sd.wait()
+        except:
+            pass
     except:
         filename = menu[select[0]][select[1]]
-        print(filename)
-    try:
-        data, fs = sf.read(os.path.join(menu[select[0]][0], filename), dtype='float32')  
-        sd.play(data, fs)
-        keyboard.wait(sd.play())
-        sd.wait()
-    except:
-        pass
+        try:
+            data, fs = sf.read(os.path.join(menu[select[0]][0], filename), dtype='float32')  
+            sd.play(data, fs)
+            keyboard.wait(sd.play())
+            sd.wait()
+        except:
+            pass
 
 
 ###! CONTROL !###
