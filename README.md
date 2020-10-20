@@ -14,7 +14,7 @@ numpad 8/2 - select sound
 numpad 4/6 - select category
 numapd 5 - play sound
 ```
-- Sound categories in overlay menu('MUSIC', 'MEME', 'OTHER')
+- Sound categories in overlay menu(folders in "sound" folder)
 
 ### Links to needs soft
 - [VoiceMeeter](https://vb-audio.com/Voicemeeter/) for translate sound into microphone
