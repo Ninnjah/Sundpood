@@ -49,7 +49,7 @@ def found_device(list_):                    # Поиск микшера VoiceMee
         index += 1
     return index
 
-def sound_get(mode):              # Сбор файлов
+def sound_get(mode):                        # Сбор файлов
 
     if os.path.exists('settings.json') and mode == False:
         sounds_list = jsonread('settings.json')
@@ -62,7 +62,17 @@ def sound_get(mode):              # Сбор файлов
         msg.setWindowTitle('Error')
         
         if os.path.exists('sound'):
-            sounds = os.listdir('sound')
+            sounds = []
+            for i in os.listdir('sound'):
+                format_ = ''
+                name = i
+                if os.path.isfile(os.path.join('sound', i)):
+                    while i[-1] != '.':
+                        format_ += i[-1]
+                        i = i[:-1]
+                    format_ = format_[::-1]
+                    if format_ == 'wav':
+                        sounds.append(name)
 
             if len(sounds) == 0:
                 msg.exec_()
@@ -71,8 +81,6 @@ def sound_get(mode):              # Сбор файлов
             menu = []
             sounds_list = ['sound\\']
             for i in os.listdir('sound'):                # Коонвертируем файлы в .wav
-                print(f'i = {i}')
-                print(os.path.join(os.getcwd(), 'sound', i))
                 name = i
                 format_ = ''
                 if os.path.isfile(os.path.join('sound', i)):
@@ -87,8 +95,6 @@ def sound_get(mode):              # Сбор файлов
                 else:
                     sounds_list_cat = [os.path.join('sound', i)]
                     for x in os.listdir(os.path.join('sound', i)):                # Коонвертируем файлы в .wav
-                        print(f'x = {x}')
-                        print(os.path.join('sound', i, x))
                         name = x
                         format_ = ''
                         if os.path.isfile(os.path.join('sound', i, x)):
@@ -104,10 +110,10 @@ def sound_get(mode):              # Сбор файлов
             menu.append(sounds_list)
 
             if os.path.exists('settings.json'):
-                hotkeys = jsonread('settings.json')[1]
-                sounds_list = [sounds, hotkeys, menu]
+                hotkeys = jsonread('settings.json')['hotkeys']
+                sounds_list = {'sounds':sounds, 'hotkeys':hotkeys, 'menu':menu}
             else:
-                sounds_list = [sounds, ['', '', '', '', '', '', '', '', '', '', '', ''], menu]
+                sounds_list = {'sounds':sounds, 'hotkeys':{'':''}, 'menu':menu}
 
             for i in COMBOS:
                 i.addItems(sounds)
@@ -118,11 +124,15 @@ def sound_get(mode):              # Сбор файлов
     return sounds_list
 
 def save():                                 # Сохранение списка хоткеев
-    hotkeys = []
+    hotkeys = {}
     sounds = sound_get(False)
-    for i in COMBOS:
-        hotkeys.append(i.currentText())
-    jsonwrite('settings.json', [sounds, hotkeys])
+    for i in range(len(COMBOS)):
+        print(COMBOS[i].currentText())
+        hotkeys.setdefault(HOTKEYS[i].text(), COMBOS[i].currentText())
+        print(hotkeys)
+
+    sounds_list = {'sounds':sounds, 'hotkeys':hotkeys, 'menu':menu}
+    jsonwrite('settings.json', sounds_list)
     sounds = None
     hotkeys = None
 
@@ -146,10 +156,17 @@ def play_sound(index):                      # Проигрываение зву�
         except:
             pass
 
+def hotkey_remap(btn):
+    button = HOTKEYS[btn]
+    key = keyboard.read_key()
+    if key not in ['esc']:
+        print(key)
+        print(COMMANDS[COMMANDS.index(button.text())])
+        COMMANDS[COMMANDS.index(button.text())] = key
+        button.setText(key)
 
 ###! CONTROL !###
 def key(arg):                               # Хоткеи
-    
     def select_move(mode):
         select[1] += mode[1]
         select[0] += mode[0]
@@ -162,18 +179,6 @@ def key(arg):                               # Хоткеи
         over.label.setText(menu[select[0]][select[1]])
         win.select_label.setText(menu[select[0]][select[1]])
 
-    keyboard.add_hotkey('f1', play_sound, args=[0])
-    keyboard.add_hotkey('f2', play_sound, args=[1])
-    keyboard.add_hotkey('f3', play_sound, args=[2])
-    keyboard.add_hotkey('f4', play_sound, args=[3])
-    keyboard.add_hotkey('f5', play_sound, args=[4])
-    keyboard.add_hotkey('f6', play_sound, args=[5])
-    keyboard.add_hotkey('f7', play_sound, args=[6])
-    keyboard.add_hotkey('f8', play_sound, args=[7])
-    keyboard.add_hotkey('f9', play_sound, args=[8])
-    keyboard.add_hotkey('f10', play_sound, args=[9])
-    keyboard.add_hotkey('f11', play_sound, args=[10])
-    keyboard.add_hotkey('f12', play_sound, args=[11])
     keyboard.add_hotkey(72, select_move, args=[[0, -1]])
     keyboard.add_hotkey(80, select_move, args=[[0, 1]])
     keyboard.add_hotkey(77, select_move, args=[[1, 0]])
@@ -181,19 +186,33 @@ def key(arg):                               # Хоткеи
     keyboard.add_hotkey(76, play_sound, args=[''])
     keyboard.add_hotkey(73, sd.stop)
 
+    while True:
+        key = keyboard.read_key()
+        print(keyboard.key_to_scan_codes(key))
+        if key == 'esc':
+            break
+        elif key in COMMANDS:
+            print(key)
+            play_sound(COMMANDS.index(key))
+
+
 def main():                                 # Интерфейс
-    sounds = sound_get(True)[1]
 
-    combo = 0
-    for i in sounds:
-        index = COMBOS[combo].findText(i)
-        COMBOS[combo].setCurrentIndex(index)
-        combo += 1
-
-    x = threading.Thread(target=key, args=(1,))
-    x.setDaemon(True)
-    x.start()
+    hotkeys_thread.start()
     win.save_button.clicked.connect(save)
+
+    win.hotkey_1.clicked.connect(lambda: hotkey_remap(0))
+    win.hotkey_2.clicked.connect(lambda: hotkey_remap(1))
+    win.hotkey_3.clicked.connect(lambda: hotkey_remap(2))
+    win.hotkey_4.clicked.connect(lambda: hotkey_remap(3))
+    win.hotkey_5.clicked.connect(lambda: hotkey_remap(4))
+    win.hotkey_6.clicked.connect(lambda: hotkey_remap(5))
+    win.hotkey_7.clicked.connect(lambda: hotkey_remap(6))
+    win.hotkey_8.clicked.connect(lambda: hotkey_remap(7))
+    win.hotkey_9.clicked.connect(lambda: hotkey_remap(8))
+    win.hotkey_10.clicked.connect(lambda: hotkey_remap(9))
+    win.hotkey_11.clicked.connect(lambda: hotkey_remap(10))
+    win.hotkey_12.clicked.connect(lambda: hotkey_remap(11))
 
 if __name__ == '__main__':
     ### Поиск устроства ввода ###
@@ -220,10 +239,47 @@ if __name__ == '__main__':
         win.combo8,
         win.combo9,
         win.combo10,
-        win.combo11,
-    ]
+        win.combo11,]
+    HOTKEYS = [
+        win.hotkey_1,
+        win.hotkey_2,
+        win.hotkey_3,
+        win.hotkey_4,
+        win.hotkey_5,
+        win.hotkey_6,
+        win.hotkey_7,
+        win.hotkey_8,
+        win.hotkey_9,
+        win.hotkey_10,
+        win.hotkey_11,
+        win.hotkey_12,]
+    
+    sounds = sound_get(True)['hotkeys']
+    combo = 0
+    for i in sounds.items():
+        index = COMBOS[combo].findText(i[1])
+        COMBOS[combo].setCurrentIndex(index)
+        HOTKEYS[combo].setText(i[0])
+        combo += 1
 
-    menu = sound_get(True)[2]
+    COMMANDS = [
+        HOTKEYS[0].text(),
+        HOTKEYS[1].text(),
+        HOTKEYS[2].text(),
+        HOTKEYS[3].text(),
+        HOTKEYS[4].text(),
+        HOTKEYS[5].text(),
+        HOTKEYS[6].text(),
+        HOTKEYS[7].text(),
+        HOTKEYS[8].text(),
+        HOTKEYS[9].text(),
+        HOTKEYS[10].text(),
+        HOTKEYS[11].text(),]
+    
+    menu = sound_get(True)['menu']
 
+    hotkeys_thread = threading.Thread(target=key, args=(1,))
+    hotkeys_thread.setDaemon(True)
+    
     main()
     sys.exit(app.exec())
