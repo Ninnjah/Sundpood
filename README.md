@@ -5,7 +5,7 @@
 App like SoundPad (needs [VoiceMeeter](https://vb-audio.com/Voicemeeter/)(allready in "redist" folder))
 
 ### Features:
-- Play sound by pressing hotkey(F1-F12)
+- Play sound by pressing hotkey
 - Converting sounds by [ffmpeg](https://ffmpeg.org/download.html)
 - Overlay menu by press F1 key
 - Overlay control on numpad
