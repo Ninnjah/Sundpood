@@ -1,12 +1,3 @@
-from pynput.keyboard import Listener
-
-def key_check(key):
-    print(str(key))
-
-key_check_Listener = Listener(
-    on_press=key_check)
-key_check_Listener.start()
-
 forbidden = [
     'Key.esc', 'Key.cmd', 'Key.cmd_r', 'Key.menu', 
     'Key.pause', 'Key.scroll_lock', 'Key.print_screen', 
