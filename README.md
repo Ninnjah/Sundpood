@@ -16,6 +16,12 @@ numapd 5 - play sound
 ```
 - Sound categories in overlay menu(folders in "sound" folder)
 
+### Used modules:
+- [sounddevice](https://pypi.org/project/sounddevice/)
+- [pynput](https://pypi.org/project/pynput/)
+- [PyQt5](https://pypi.org/project/PyQt5/)
+
+
 ### Links to needs soft
 - [VoiceMeeter](https://vb-audio.com/Voicemeeter/) for translate sound into microphone
 - [ffmpeg](https://ffmpeg.org/download.html) for convert sounds in .wav format
