@@ -43,42 +43,58 @@ class MainUi(QtWidgets.QMainWindow, ui_sundpood.Ui_MainWindow):
 
 
 ###! JSON !###
-def jsonread(file):                         ## Чтение JSON
+def jsonread(file):
+    '''
+    Чтение JSON файла file
+    file - имя JSON файла, может содержать полный или относительный путь
+    '''
     with open(file, "r", encoding='utf-8') as read_file:
         data = json.load(read_file)
     return data
 
-def jsonwrite(file, data):                  ## Запись JSON
+def jsonwrite(file, data):
+    '''
+    Запись в JSON файл file данные data
+    file - имя JSON файла, может содержать полный или относительный путь
+    data - данные, может быть словарем/списком/кортежем/строкой/числом
+    '''
     with open(file, 'w', encoding='utf-8') as write_file:
         write_file.write(json.dumps(data))
 
 
 ###! FUNCTIONS !###
-def find_device(list_):                     # Поиск микшера VoiceMeeter
-    msg = QtWidgets.QMessageBox()
+def find_device():
+    '''
+    Ищем устройство device и возвращаем его индекс
+    '''
+
+    list_ = list(sd.query_devices())    # Список устройств вывода звука
+    device = 'VoiceMeeter Input'        # Имя искомого устройства
+
+    msg = QtWidgets.QMessageBox()       # Окно ошибки (Устройство не найдено)
     msg.setIcon(QtWidgets.QMessageBox.Critical)
     msg.setText("You don't install VoiceMeeter")
     msg.setInformativeText('install VoiceMetter from "redist" folder or download it from \nvb-audio.com/Voicemeeter')
     msg.setWindowTitle('Error')
 
-    index = 0
-    device = 'VoiceMeeter Input'
-    found = False
     for i in list_:
-        if device not in i['name']:
-            index += 1
-        elif device in i['name']:
-            found = True
-            break
-    if found == False:
-        msg.exec_()
-        exit()
+        if device in i['name']:
+            return i['name']
+    
+    msg.exec_()
+    exit()
 
-    return index
-
-def sound_get():                            # Сбор файлов
-    def check_format(name, format_):        # Проверка слова до точки с конца строки
-        suf = ''
+def sound_get():
+    '''
+    Сбор всех аудифайлов
+    '''
+    def check_format(name, format_):
+        '''
+        Проверка формата файла name
+        name - название файла, только название
+        format_ - нужный формат
+        '''
+        suf = ''                        # Суффикс
         while name[-1] != '.':
             suf += name[-1]
             name = name[:-1]
@@ -94,7 +110,15 @@ def sound_get():                            # Сбор файлов
             else:
                 return False
     
-    def sound_convert(path, name, format_): # Конвертация из форматов 'mp3' 'm4a' в format_
+    def sound_convert(path, name, format_):
+        '''
+        Конвертация файла name в папке path в формат format_
+        по средством ffmpeg.exe
+
+        path - папка с файлом, может содержать полный или относительный путь
+        name - название файла, может только название файла
+        format_ - формат в который нужно конвертировать
+        '''
         if os.path.exists('ffmpeg.exe'):
             old_name = name
             if check_format(name, ['mp3', 'm4a']):
@@ -106,13 +130,13 @@ def sound_get():                            # Сбор файлов
                 os.remove(f'{os.path.join(path, old_name)}')
             return name
     
-    msg = QtWidgets.QMessageBox()
+    msg = QtWidgets.QMessageBox()       # Окно ошибки (Не найдены файлы в папке 'sound')
     msg.setIcon(QtWidgets.QMessageBox.Critical)
     msg.setText("You don't have any sounds in 'sound' folder")
     msg.setInformativeText('download sound in .wav / .mp3 / .m4a format')
     msg.setWindowTitle('Error')
     
-    ffmsg = QtWidgets.QMessageBox()
+    ffmsg = QtWidgets.QMessageBox()     # Окно ошибки (Не найден ffmpeg.exe)
     ffmsg.setIcon(QtWidgets.QMessageBox.Warning)
     ffmsg.setText("You don't have ffmpeg.exe in the program root folder")
     ffmsg.setInformativeText('download ffmpeg from ffmpeg.org for converting sound files')
@@ -122,8 +146,9 @@ def sound_get():                            # Сбор файлов
         if len(os.listdir('sound')) == 0:
             msg.exec_()
 
-        menu = []
-        sounds_list = ['sound\\']
+        menu = []                       # Оверлейное меню
+        sounds_list = ['sound\\']       # Начальная категория
+        sounds = []                     # Все аудиофайлы
         for i in os.listdir('sound'):
             if os.path.exists('ffmpeg.exe') or not ffmsg:
                 if os.path.isfile(os.path.join('sound', i)):
@@ -151,7 +176,6 @@ def sound_get():                            # Сбор файлов
                     pass
         menu.append(sounds_list)
 
-        sounds = []
         for i in os.listdir('sound'):
             if os.path.isfile(os.path.join('sound', i)):
                 if check_format(i, 'wav'):
@@ -196,23 +220,29 @@ def sound_get():                            # Сбор файлов
         os.mkdir('sound')
         msg.exec_()
 
-def save():                                 # Сохранение списка хоткеев
-    hotkeys = {}
-    sounds = jsonread('settings.json')['sounds']
+def save():
+    '''
+    Сохранение настроек оверлея и глобальных хоткеев
+    '''
+    hotkeys = {}                        # Словарь хоткеев и аудиофайлов
+    sounds = jsonread('settings.json')['sounds']# Все аудиофайлы
+    KEYS_JSON = {}                      # Настроенные клавиши
+
     for i in range(len(COMBOS)):
         hotkeys.setdefault(HOTKEYS[i].text(), COMBOS[i].currentText())
 
-    KEYS_JSON = {}
     for i in KEYS_CMD.keys():
         KEYS_JSON.setdefault(COMMAND_DICT[i], KEYS_CMD[i])
 
     sounds_list = {'sounds':sounds, 'hotkeys':hotkeys, 'menu':menu, 'KEYS_CMD':KEYS_JSON}
     jsonwrite('settings.json', sounds_list)
-    KEYS_JSON = None
-    hotkeys = None
-    sounds = None
 
-def play_sound(index):                      # Проигрываение звука
+def play_sound(index):
+    '''
+    Проигрывание звука
+    index - может быть индексом комбобокса с именем
+        или '' для проигрывания выбранного в оверлее имени
+    '''
     try:
         filename = COMBOS[index].currentText()
         try:
@@ -228,8 +258,18 @@ def play_sound(index):                      # Проигрываение зву�
         except:
             pass
 
-def hotkey_remap(btn):                      # Переназначение хоткеев
+def hotkey_remap(btn):
+    '''
+    Переназначение хоткея
+    btn - индекс кнопки хоткея в списке HOTKEYS
+    '''
     def check(key):
+        '''
+        Проверка кнопки btn на не участие 
+            в списке запрещенных клавиш keys.forbidden
+            если это клавиша 'Key.backspace' то стираем значение
+        key - pynput код клавиши
+        '''
         button = HOTKEYS[btn]
         key = str(key).replace("'",'')
 
@@ -253,7 +293,18 @@ def hotkey_remap(btn):                      # Переназначение хо�
     hotkey_remap_Listener.start()
 
 def pref_remap(btn, func_):
+    '''
+    Переназначение клавиши в окно Preference
+    btn - PyQt5 кнопка
+    func_ - строковое значени функции из словаря KEYS_CMD
+    '''
     def check(key):
+        '''
+        Проверка кнопки btn на не участие 
+            в списке запрещенных клавиш keys.forbidden
+            если это клавиша 'Key.backspace' то стираем значение
+        key - pynput код клавиши
+        '''
         key = str(key).replace("'",'')
         if key not in keys.forbidden:
             func = find_key(COMMAND_DICT, func_)
@@ -277,13 +328,23 @@ def pref_remap(btn, func_):
     save()
 
 def find_key(dict, val):
+    '''
+    Поиск ключа в словаре dict по значению val
+    dict - словарь
+    val - значение
+    '''
     return next(key for key, value in dict.items() if value == val)
 
 
 ###! CONTROL !###
 def select_move(mode):
-    select[1] += mode[1]
-    select[0] += mode[0]
+    '''
+    Перемешение по оверлейному меню
+    mode - кортеж из двух цифр 
+        (смещение по категории, смещение по списку)
+    '''
+    select[0] += mode[0]    # Категории
+    select[1] += mode[1]    # Файлы в категории
     if select[0] > len(menu)-1 or select[0] < -len(menu)+1:
         select[0] = 0
     if select[1] > len(menu[select[0]])-1 or select[1] < -len(menu[select[0]])+1:
@@ -293,20 +354,27 @@ def select_move(mode):
     over.label.setText(menu[select[0]][select[1]])
     win.select_label.setText(menu[select[0]][select[1]])
 
-def key_check(key):                         # Хоткеи
-    key_n = ''
-    key = str(key).replace("'",'')
+def key_check(key):
+    '''
+    Проверка клавиши key на наличие записанных функций
+    key - pynput код клавиши
+    '''
+    key = str(key).replace("'",'')  # Преобразование кода в строку
+    key_n = ''                      # Переведенное значение клавиши
     try:
         key_n = keys.dict_[key]
     except KeyError:
         pass
-    print(f'{key_n} in {HOTKEYS_CMD} -- {key_n in HOTKEYS_CMD}')
     if key_n in HOTKEYS_CMD:
         play_sound(HOTKEYS_CMD.index(key_n))
     elif key in KEYS_CMD.values():
         find_key(KEYS_CMD, key)()
 
-def main():                                 # Интерфейс
+def main():
+    '''
+    Открытие окна win, запуск слушателя клавиатуры,
+        подключение кнопок интерфейса к функциям
+    '''
     win.show()
 
     key_check_Listener = Listener(
@@ -345,11 +413,11 @@ def main():                                 # Интерфейс
 
 if __name__ == '__main__':
     ### Создание окна ###
-    app = QtWidgets.QApplication([])
-    over = OverlayUi()
-    pref = PreferencesUi()
-    win = MainUi()
-    COMBOS = [
+    app = QtWidgets.QApplication([])    # Приложение
+    over = OverlayUi()                  # Окно оверлея
+    pref = PreferencesUi()              # Окно настроек
+    win = MainUi()                      # Основное окно
+    COMBOS = [                          # Список комбобоксов в win
         win.combo0,
         win.combo1,
         win.combo2,
@@ -362,7 +430,7 @@ if __name__ == '__main__':
         win.combo9,
         win.combo10,
         win.combo11,]
-    HOTKEYS = [
+    HOTKEYS = [                         # Список кнопок хоткеев в win
         win.hotkey_1,
         win.hotkey_2,
         win.hotkey_3,
@@ -375,7 +443,7 @@ if __name__ == '__main__':
         win.hotkey_10,
         win.hotkey_11,
         win.hotkey_12,]
-    PREF_BTN = [
+    PREF_BTN = [                        # Список кнопок настроек клавиш в pref
         pref.select_move_up,
         pref.select_move_down,
         pref.select_move_left,
@@ -384,27 +452,27 @@ if __name__ == '__main__':
         pref.stop_sound,]
 
     ### Поиск устроства ввода ###
-    list_ = list(sd.query_devices())
-    index = find_device(list_)
-    sd.default.device = list_[index]['name']
-    sound_get()
+    sd.default.device = find_device()   # Установка устройства вывода по умолчанию
+    sound_get()                         # Сбор всех аудиофайлов
 
     ### Глобальные переменные ###
-    sound_get_dict = jsonread('settings.json')
-    hotkeys = sound_get_dict['hotkeys']
-    menu = sound_get_dict['menu']
-    select = [0, 0]
-    COMMAND_DICT = {
-            lambda: select_move([0, -1]):'select_move_up',      # вверх
-            lambda: select_move([0, 1]) :'select_move_down',    # вниз
-            lambda: select_move([-1, 0]):'select_move_left',    # влево
-            lambda: select_move([1, 0]) :'select_move_right',   # вправо
+    sound_get_dict = jsonread('settings.json')# Загрузка данных
+    hotkeys = sound_get_dict['hotkeys'] # Загрузка словаря хоткеев
+    menu = sound_get_dict['menu']       # Загрузка оверлейного меню
+    select = [0, 0]                     # Установка курсора оверлея в нулевую позицию
+    COMMAND_DICT = {                    # Словарь функций к строковому значению
+            lambda: select_move((0, -1)):'select_move_up',      # вверх
+            lambda: select_move((0, 1)) :'select_move_down',    # вниз
+            lambda: select_move((-1, 0)):'select_move_left',    # влево
+            lambda: select_move((1, 0)) :'select_move_right',   # вправо
             lambda: play_sound('')      :'play_sound',          # Играть
             lambda: sd.stop()           :'stop_sound',          # Остановить
     }
-    KEYS_CMD = COMMAND_DICT.copy()
-    KEYS_JSON = sound_get_dict['KEYS_CMD']
-    for i in KEYS_CMD.keys():
+    KEYS_JSON = sound_get_dict['KEYS_CMD']# Загрузка настроенных клавиш
+    KEYS_CMD = COMMAND_DICT.copy()      # Настроенные клавиши
+
+    ### Установка настроенных клавиш ###
+    for i in KEYS_CMD.keys():           
         KEYS_CMD.update({i:KEYS_JSON[COMMAND_DICT[i]]})
     KEYS_JSON = None
 
@@ -413,6 +481,7 @@ if __name__ == '__main__':
         PREF_BTN[combo].setText(keys.dict_[i])
         combo += 1
 
+    ### Установка хоткеев ###
     combo = 0
     for i in hotkeys.items():
         index = COMBOS[combo].findText(i[1])
@@ -421,7 +490,7 @@ if __name__ == '__main__':
         combo += 1
     combo = None
 
-    HOTKEYS_CMD = [
+    HOTKEYS_CMD = [                     # Имена связанные с хоткеями
         HOTKEYS[0].text(),
         HOTKEYS[1].text(),
         HOTKEYS[2].text(),
