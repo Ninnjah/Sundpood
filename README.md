@@ -7,21 +7,13 @@ App like [SoundPad](https://www.leppsoft.com/soundpad/en/download/)(needs [Voice
 ### Features:
 - Play sound by pressing hotkey
 - Converting sounds by [ffmpeg](https://ffmpeg.org/download.html)
+- Sound categories (folders in "sound" folder)
 - Overlay menu by press F1 key
-- Overlay control on numpad
-```
-numpad 8/2 - select sound
-numpad 4/6 - select category
-numapd 5 - play sound
-```
-- Sound categories in overlay menu(folders in "sound" folder)
+- Overlay control on numpad (set in preferences)
 
-### Used modules:
-- [sounddevice](https://pypi.org/project/sounddevice/)
-- [pynput](https://pypi.org/project/pynput/)
-- [PyQt5](https://pypi.org/project/PyQt5/)
-
-
-### Links to needs soft
-- [VoiceMeeter](https://vb-audio.com/Voicemeeter/) for translate sound into microphone
+### Requirements:
+- [sounddevice](https://pypi.org/project/sounddevice/) for playing sounds
+- [pynput](https://pypi.org/project/pynput/) for hotkeys
+- [PyQt5](https://pypi.org/project/PyQt5/) for GUI
+- [VoiceMeeter](https://vb-audio.com/Voicemeeter/) for redirect sound into microphone
 - [ffmpeg](https://ffmpeg.org/download.html) for convert sounds in .wav format
