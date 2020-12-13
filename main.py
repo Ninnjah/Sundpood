@@ -1,20 +1,28 @@
 import os
 import sys
 import json
+from time import time
 import threading
 import soundfile as sf
 import sounddevice as sd
 from pynput.keyboard import Listener
 from PyQt5 import QtWidgets, QtGui, QtCore
+from PyQt5.QtCore import QFile, QTextStream
+from PyQt5.QtWidgets import QApplication
 import ui_preferences
+import ui_hotkeys
 import ui_sundpood
 import ui_overlay
+import themes
 import keys
+
 
 ###! UI !###
 class OverlayUi(QtWidgets.QMainWindow, ui_overlay.Ui_MainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint)
+        self.setGeometry(QtCore.QRect(0, 0, 250, 20))
         self.setupUi(self)
 
     def keyPressEvent(self, e):
@@ -25,13 +33,51 @@ class OverlayUi(QtWidgets.QMainWindow, ui_overlay.Ui_MainWindow):
 class PreferencesUi(QtWidgets.QMainWindow, ui_preferences.Ui_MainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.setupUi(self)
+
+    def mousePressEvent(self, event):
+        self.offset = event.pos()
+
+    def mouseMoveEvent(self, event):
+        x = event.globalX()
+        y = event.globalY()
+        x_w = self.offset.x()
+        y_w = self.offset.y()
+        self.move(x-x_w, y-y_w)
+
+class HotkeysUi(QtWidgets.QMainWindow, ui_hotkeys.Ui_MainWindow):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        self.setupUi(self)
+
+    def mousePressEvent(self, event):
+        self.offset = event.pos()
+
+    def mouseMoveEvent(self, event):
+        x = event.globalX()
+        y = event.globalY()
+        x_w = self.offset.x()
+        y_w = self.offset.y()
+        self.move(x-x_w, y-y_w)
 
 class MainUi(QtWidgets.QMainWindow, ui_sundpood.Ui_MainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.setupUi(self)
 
+    def mousePressEvent(self, event):
+        self.offset = event.pos()
+
+    def mouseMoveEvent(self, event):
+        x = event.globalX()
+        y = event.globalY()
+        x_w = self.offset.x()
+        y_w = self.offset.y()
+        self.move(x-x_w, y-y_w)
+    
     def keyPressEvent(self, e):
         if e.key() == QtCore.Qt.Key_F1:
             pref.close()
@@ -39,6 +85,7 @@ class MainUi(QtWidgets.QMainWindow, ui_sundpood.Ui_MainWindow):
             over.show()
 
     def closeEvent(self, event):
+        hotk.close()
         pref.close()
 
 
@@ -63,6 +110,31 @@ def jsonwrite(file, data):
 
 
 ###! FUNCTIONS !###
+def toggle_stylesheet(path):
+    '''
+    Toggle the stylesheet to use the desired path in the Qt resource
+    system (prefixed by `:/`) or generically (a path to a file on
+    system).
+
+    :path:      A full path to a resource or file on system
+    '''
+
+    # get the QApplication instance,  or crash if not set
+    app = QApplication.instance()
+    if app is None:
+        raise RuntimeError("No Qt Application found.")
+
+    path = os.path.join('themes', path)
+    file = QFile(path)
+    file.open(QFile.ReadOnly | QFile.Text)
+    stream = QTextStream(file)
+    theme = stream.readAll()
+    
+    pref.setStyleSheet(theme)
+    win.setStyleSheet(theme)
+    hotk.setStyleSheet(theme)
+    save()
+
 def find_device():
     '''
     Ищем устройство device и возвращаем его индекс
@@ -84,52 +156,31 @@ def find_device():
     msg.exec_()
     exit()
 
-def sound_get():
+def sound_convert(dir_, format_):
+    '''
+    Конвертация файла name в папке path в формат format_
+    по средством ffmpeg.exe
+
+    path - папка с файлом, может содержать полный или относительный путь
+    name - название файла, может только название файла
+    format_ - формат в который нужно конвертировать
+    '''
+    if os.path.exists('ffmpeg.exe'):
+        path, name = os.path.split(dir_)
+        old_name = name
+        if os.path.splitext(dir_)[1] in ['.mp3', '.m4a']:
+            name = os.path.splitext(name)[0] + format_
+            os.system(f'ffmpeg.exe -i "{os.path.join(path, old_name)}" "play.wav" -hide_banner -y')
+            return "play.wav"
+        else:
+            return dir_
+
+def get_files(dir_, config):
     '''
     Сбор всех аудифайлов
+    dir_ - Путь к папке со звуками
+    config - Имя файла настроек
     '''
-    def check_format(name, format_):
-        '''
-        Проверка формата файла name
-        name - название файла, только название
-        format_ - нужный формат
-        '''
-        suf = ''                        # Суффикс
-        while name[-1] != '.':
-            suf += name[-1]
-            name = name[:-1]
-        suf = suf[::-1]
-        if type(format_) is list:
-            if suf in format_:
-                return True
-            else:
-                return False
-        elif type(format_) is str:
-            if suf == format_:
-                return True
-            else:
-                return False
-    
-    def sound_convert(path, name, format_):
-        '''
-        Конвертация файла name в папке path в формат format_
-        по средством ffmpeg.exe
-
-        path - папка с файлом, может содержать полный или относительный путь
-        name - название файла, может только название файла
-        format_ - формат в который нужно конвертировать
-        '''
-        if os.path.exists('ffmpeg.exe'):
-            old_name = name
-            if check_format(name, ['mp3', 'm4a']):
-                while name[-1] != '.':
-                    name = name[:-1]
-                name += format_
-
-                os.system(f'ffmpeg.exe -i "{os.path.join(path, old_name)}" "{os.path.join(path, name)}"')
-                os.remove(f'{os.path.join(path, old_name)}')
-            return name
-    
     msg = QtWidgets.QMessageBox()       # Окно ошибки (Не найдены файлы в папке 'sound')
     msg.setIcon(QtWidgets.QMessageBox.Critical)
     msg.setText("You don't have any sounds in 'sound' folder")
@@ -137,61 +188,51 @@ def sound_get():
     msg.setWindowTitle('Error')
     
     ffmsg = QtWidgets.QMessageBox()     # Окно ошибки (Не найден ffmpeg.exe)
-    ffmsg.setIcon(QtWidgets.QMessageBox.Warning)
+    ffmsg.setIcon(QtWidgets.QMessageBox.Critical)
     ffmsg.setText("You don't have ffmpeg.exe in the program root folder")
     ffmsg.setInformativeText('download ffmpeg from ffmpeg.org for converting sound files')
     ffmsg.setWindowTitle('Error')
 
-    if os.path.exists('sound'):
-        if len(os.listdir('sound')) == 0:
+    if os.path.exists(dir_):
+        if len(os.listdir(dir_)) == 0:
             msg.exec_()
 
-        menu = []                       # Оверлейное меню
-        sounds_list = ['sound\\']       # Начальная категория
-        sounds = []                     # Все аудиофайлы
-        for i in os.listdir('sound'):
-            if os.path.exists('ffmpeg.exe') or not ffmsg:
-                if os.path.isfile(os.path.join('sound', i)):
-                    name = sound_convert('sound', i, 'wav')
-                    if name == None:
-                        sounds_list.append(i)
-                    else:
-                        sounds_list.append(name)
-                else:
-                    sounds_list_cat = [os.path.join('sound', i)]
-                    for x in os.listdir(os.path.join('sound', i)):
-                        if os.path.isfile(os.path.join('sound', i, x)):
-                            name = sound_convert(os.path.join('sound', i), x, 'wav')
-                            if name == None:
-                                sounds_list_cat.append(x)
-                            else:
-                                sounds_list_cat.append(name)
-                    menu.append(sounds_list_cat)
+        sounds = []                     # Все аудио файлы
+        sounds_list = [f'{dir_}\\']       # Начальная категория
+
+        if not os.path.exists('ffmpeg.exe'):
+            ffmsg.exec_()
+            exit()
+
+        for i in os.listdir(dir_):
+            if os.path.isfile(os.path.join(dir_, i)):
+                name = os.path.join(dir_, i)
+                if name == None:
+                    sounds_list.append(i)
+                elif os.path.splitext(name)[1] in ['.mp3', '.m4a', '.wav']:
+                    sounds_list.append(name)
             else:
-                print('else')
-                try:
-                    ffmsg.exec_()
-                    ffmsg = False
-                except AttributeError:
-                    pass
-        menu.append(sounds_list)
+                sounds_list_cat = [os.path.join(dir_, i)]
+                for x in os.listdir(os.path.join(dir_, i)):
+                    if os.path.isfile(os.path.join(dir_, i, x)):
+                        if name == None:
+                            sounds_list_cat.append(x)
+                        elif os.path.splitext(x)[1] in ['.mp3', '.m4a', '.wav']:
+                            sounds_list_cat.append(x)
+                sounds.append(sounds_list_cat)
+        sounds.append(sounds_list)
 
-        for i in os.listdir('sound'):
-            if os.path.isfile(os.path.join('sound', i)):
-                if check_format(i, 'wav'):
-                    sounds.append(i)
-
-        if os.path.exists('settings.json'):
-            hotkeys = jsonread('settings.json')['hotkeys']
-            KEYS_CMD = jsonread('settings.json')['KEYS_CMD']
-            sounds_list = { 'sounds':sounds, 
-                            'hotkeys':hotkeys, 
-                            'menu':menu,
+        if os.path.exists(config):
+            hotkeys = jsonread(config)['hotkeys']
+            KEYS_CMD = jsonread(config)['KEYS_CMD']
+            sounds_list = { 'hotkeys':hotkeys, 
+                            'sounds':sounds,
+                            'Theme':'None',
                             'KEYS_CMD':KEYS_CMD}
         else:
-            sounds_list = { 'sounds':sounds, 
-                            'hotkeys':{'Push button':''}, 
-                            'menu':menu,
+            sounds_list = { 'hotkeys':{}, 
+                            'sounds':sounds,
+                            'Theme':'None',
                             'KEYS_CMD':{
                             'select_move_up'    :' ',# вверх
                             'select_move_down'  :' ',# вниз
@@ -200,14 +241,12 @@ def sound_get():
                             'play_sound'        :' ',# Играть
                             'stop_sound'        :' ',# Остановить
                             }}
-        for i in COMBOS:
-            i.addItems(sounds)
 
-        jsonwrite('settings.json', sounds_list)
+        jsonwrite(config, sounds_list)
     else:
-        sounds_list = { 'sounds':'', 
-                        'hotkeys':{'Push button':''}, 
-                        'menu':'',
+        sounds_list = { 'hotkeys':{}, 
+                        'sounds':'',
+                        'Theme':'None',
                         'KEYS_CMD':{
                             'select_move_up'    :' ',# вверх
                             'select_move_down'  :' ',# вниз
@@ -216,81 +255,80 @@ def sound_get():
                             'play_sound'        :' ',# Играть
                             'stop_sound'        :' ',# Остановить
                             }}
-        jsonwrite('settings.json', sounds_list)
-        os.mkdir('sound')
+        jsonwrite(config, sounds_list)
+        os.mkdir(dir_)
         msg.exec_()
 
-def save():
-    '''
-    Сохранение настроек оверлея и глобальных хоткеев
-    '''
-    hotkeys = {}                        # Словарь хоткеев и аудиофайлов
-    sounds = jsonread('settings.json')['sounds']# Все аудиофайлы
-    KEYS_JSON = {}                      # Настроенные клавиши
-
-    for i in range(len(COMBOS)):
-        hotkeys.setdefault(HOTKEYS[i].text(), COMBOS[i].currentText())
-
-    for i in KEYS_CMD.keys():
-        KEYS_JSON.setdefault(COMMAND_DICT[i], KEYS_CMD[i])
-
-    sounds_list = {'sounds':sounds, 'hotkeys':hotkeys, 'menu':menu, 'KEYS_CMD':KEYS_JSON}
-    jsonwrite('settings.json', sounds_list)
-
-def play_sound(index):
-    '''
-    Проигрывание звука
-    index - может быть индексом комбобокса с именем
-        или '' для проигрывания выбранного в оверлее имени
-    '''
+def play_sound(*argv):
+    if False in argv:
+        try:
+            sound = os.path.join(win.soundList.item(0).text(),
+                    win.soundList.currentItem().text())
+        except AttributeError:
+            return False
+    else:
+        sound = argv[0]
     try:
-        filename = COMBOS[index].currentText()
-        try:
-            data, fs = sf.read(os.path.join('sound', filename), dtype='float32')  
-            sd.play(data, fs)
-        except:
-            pass
-    except:
-        filename = menu[select[0]][select[1]]
-        try:
-            data, fs = sf.read(os.path.join(menu[select[0]][0], filename), dtype='float32')  
-            sd.play(data, fs)
-        except:
-            pass
+        sound = sound_convert(sound, '.wav')
+        data, fs = sf.read(sound, dtype='float32')  
+        sd.play(data, fs)
+        #os.remove(sound)
+    except RuntimeError:
+        pass
 
-def hotkey_remap(btn):
+def cat_select(cat):
+    win.soundList.clear()
+    for i in menu:
+        if cat == i[0]:
+            win.soundList.addItems(i)
+
+def hotkey_remap():
     '''
     Переназначение хоткея
     btn - индекс кнопки хоткея в списке HOTKEYS
     '''
     def check(key):
-        '''
-        Проверка кнопки btn на не участие 
-            в списке запрещенных клавиш keys.forbidden
-            если это клавиша 'Key.backspace' то стираем значение
-        key - pynput код клавиши
-        '''
-        button = HOTKEYS[btn]
         key = str(key).replace("'",'')
+        try:
+            sound = os.path.join(win.soundList.item(0).text(),
+                        win.soundList.currentItem().text())
+        except AttributeError:
+            win.hkset.setEnabled(True)
+            return False
 
         if key not in keys.forbidden:
-            HOTKEYS_CMD[HOTKEYS_CMD.index(button.text())] = keys.dict_[key]
-            button.setText(keys.dict_[key])
+            hotkeys.update({key:sound})
         elif key == 'Key.backspace':
-            HOTKEYS_CMD[HOTKEYS_CMD.index(button.text())] = ' '
-            button.setText(' ')
-        for i in HOTKEYS:
-            if i != HOTKEYS[btn]:
-                i.setEnabled(True)
+            del hotkeys[find_key(hotkeys, sound)]
+
+        save()
+        hotk.hotkeyList.clear()
+        for i in sound_get_dict['sounds']:
+            for x in i:
+                x = os.path.join(i[0], x)
+                if x in hotkeys.values():
+                    hotk.hotkeyList.addItem(f'{find_key(hotkeys, x)}\t:{x}')
+
+        win.hkset.setEnabled(True)
         return False
 
-    for i in HOTKEYS:
-        if i != HOTKEYS[btn]:
-            i.setEnabled(False)
+    win.hkset.setEnabled(False)
 
     hotkey_remap_Listener = Listener(
         on_release=check)
     hotkey_remap_Listener.start()
+
+def hotkey_delete():
+    key = hotk.hotkeyList.currentItem().text().split(':')[0].replace('\t', '')
+    hotkeys.pop(key)
+
+    save()
+    hotk.hotkeyList.clear()
+    for i in sound_get_dict['sounds']:
+        for x in i:
+            x = os.path.join(i[0], x)
+            if x in hotkeys.values():
+                hotk.hotkeyList.addItem(f'{find_key(hotkeys, x)}\t:{x}')
 
 def pref_remap(btn, func_):
     '''
@@ -307,15 +345,14 @@ def pref_remap(btn, func_):
         '''
         key = str(key).replace("'",'')
         if key not in keys.forbidden:
-            func = find_key(COMMAND_DICT, func_)
-            KEYS_CMD.update({func : key})
+            KEYS_CMD.update({find_key(COMMAND_DICT, func_) : key})
             btn.setText(keys.dict_[key])
         elif key == 'Key.backspace':
-            func = find_key(COMMAND_DICT, func_)
-            KEYS_CMD.update({func : ' '})
+            KEYS_CMD.update({find_key(COMMAND_DICT, func_) : ' '})
             btn.setText(' ')
         for i in PREF_BTN:
             i.setEnabled(True)
+        save()
         return False
 
     for i in PREF_BTN:
@@ -325,16 +362,28 @@ def pref_remap(btn, func_):
         on_release=check)
     hotkey_remap_Listener.start()
 
-    save()
-
 def find_key(dict, val):
     '''
     Поиск ключа в словаре dict по значению val
     dict - словарь
     val - значение
     '''
-    return next(key for key, value in dict.items() if value == val)
+    return next((key for key, value in dict.items() if value == val), None)
 
+def save():
+    '''
+    Сохранение настроек оверлея и глобальных хоткеев
+    '''
+    sounds = jsonread(config)['sounds']# Все аудиофайлы
+    
+    KEYS_JSON = {}                      # Настроенные клавиши
+    for i in KEYS_CMD.keys():
+        KEYS_JSON.setdefault(COMMAND_DICT[i], KEYS_CMD[i])
+
+    theme = pref.themesList.currentItem().text()
+    
+    sounds_list = {'sounds':sounds, 'hotkeys':hotkeys, 'Theme':theme, 'KEYS_CMD':KEYS_JSON}
+    jsonwrite(config, sounds_list)
 
 ###! CONTROL !###
 def select_move(mode):
@@ -355,47 +404,35 @@ def select_move(mode):
     win.select_label.setText(menu[select[0]][select[1]])
 
 def key_check(key):
-    '''
-    Проверка клавиши key на наличие записанных функций
-    key - pynput код клавиши
-    '''
     key = str(key).replace("'",'')  # Преобразование кода в строку
     key_n = ''                      # Переведенное значение клавиши
     try:
         key_n = keys.dict_[key]
     except KeyError:
         pass
-    if key_n in HOTKEYS_CMD:
-        play_sound(HOTKEYS_CMD.index(key_n))
+    if key in hotkeys.keys():
+        play_sound(hotkeys[key])
     elif key in KEYS_CMD.values():
         find_key(KEYS_CMD, key)()
 
 def main():
-    '''
-    Открытие окна win, запуск слушателя клавиатуры,
-        подключение кнопок интерфейса к функциям
-    '''
-    win.show()
-
     key_check_Listener = Listener(
         on_release=key_check)
     key_check_Listener.start()
 
-    
-    win.save_button.clicked.connect(save)
-    win.actionpreferences.triggered.connect(pref.show)
-    win.hotkey_1.clicked.connect(lambda: hotkey_remap(0))
-    win.hotkey_2.clicked.connect(lambda: hotkey_remap(1))
-    win.hotkey_3.clicked.connect(lambda: hotkey_remap(2))
-    win.hotkey_4.clicked.connect(lambda: hotkey_remap(3))
-    win.hotkey_5.clicked.connect(lambda: hotkey_remap(4))
-    win.hotkey_6.clicked.connect(lambda: hotkey_remap(5))
-    win.hotkey_7.clicked.connect(lambda: hotkey_remap(6))
-    win.hotkey_8.clicked.connect(lambda: hotkey_remap(7))
-    win.hotkey_9.clicked.connect(lambda: hotkey_remap(8))
-    win.hotkey_10.clicked.connect(lambda: hotkey_remap(9))
-    win.hotkey_11.clicked.connect(lambda: hotkey_remap(10))
-    win.hotkey_12.clicked.connect(lambda: hotkey_remap(11))
+    win.exit_button.clicked.connect(win.close)
+    win.min_button.clicked.connect(win.showMinimized)
+    pref.exit_button.clicked.connect(pref.close)
+    pref.min_button.clicked.connect(pref.showMinimized)
+    hotk.exit_button.clicked.connect(hotk.close)
+    hotk.min_button.clicked.connect(hotk.showMinimized)
+
+    win.hkset.clicked.connect(hotkey_remap)
+    win.pref_button.clicked.connect(pref.show)
+    win.hotkeys_button.clicked.connect(hotk.show)
+    win.catList.currentTextChanged.connect(cat_select)
+    win.stop_button.clicked.connect(lambda: sd.stop())
+    win.play_button.clicked.connect(play_sound)
 
     pref.play_sound.clicked.connect(
         lambda: pref_remap(pref.play_sound, 'play_sound'))
@@ -409,40 +446,21 @@ def main():
         lambda: pref_remap(pref.select_move_left, 'select_move_left'))
     pref.select_move_right.clicked.connect(
         lambda: pref_remap(pref.select_move_right, 'select_move_right'))
+    pref.themesList.currentTextChanged.connect(toggle_stylesheet)
+
+    hotk.delete_button.clicked.connect(hotkey_delete)
+
+    win.show()
 
 
 if __name__ == '__main__':
     ### Создание окна ###
-    app = QtWidgets.QApplication([])    # Приложение
+    app = QApplication([])    # Приложение
     over = OverlayUi()                  # Окно оверлея
     pref = PreferencesUi()              # Окно настроек
+    hotk = HotkeysUi()                  # Окно хоткеев
     win = MainUi()                      # Основное окно
-    COMBOS = [                          # Список комбобоксов в win
-        win.combo0,
-        win.combo1,
-        win.combo2,
-        win.combo3,
-        win.combo4,
-        win.combo5,
-        win.combo6,
-        win.combo7,
-        win.combo8,
-        win.combo9,
-        win.combo10,
-        win.combo11,]
-    HOTKEYS = [                         # Список кнопок хоткеев в win
-        win.hotkey_1,
-        win.hotkey_2,
-        win.hotkey_3,
-        win.hotkey_4,
-        win.hotkey_5,
-        win.hotkey_6,
-        win.hotkey_7,
-        win.hotkey_8,
-        win.hotkey_9,
-        win.hotkey_10,
-        win.hotkey_11,
-        win.hotkey_12,]
+
     PREF_BTN = [                        # Список кнопок настроек клавиш в pref
         pref.select_move_up,
         pref.select_move_down,
@@ -450,22 +468,40 @@ if __name__ == '__main__':
         pref.select_move_right,
         pref.play_sound,
         pref.stop_sound,]
-
+    
     ### Поиск устроства ввода ###
     sd.default.device = find_device()   # Установка устройства вывода по умолчанию
-    sound_get()                         # Сбор всех аудиофайлов
-
+    
     ### Глобальные переменные ###
-    sound_get_dict = jsonread('settings.json')# Загрузка данных
+    dir_ = 'sound'
+    config = 'settings.json'
+    get_files(dir_, config)             # Сбор всех аудиофайлов
+    sound_get_dict = jsonread(config)   # Загрузка данных
     hotkeys = sound_get_dict['hotkeys'] # Загрузка словаря хоткеев
-    menu = sound_get_dict['menu']       # Загрузка оверлейного меню
+    theme = sound_get_dict['Theme']     # Загрузка темы
+    menu = sound_get_dict['sounds']     # Загрузка оверлейного меню
     select = [0, 0]                     # Установка курсора оверлея в нулевую позицию
+
+    if theme != 'None':
+        toggle_stylesheet(theme)
+    pref.themesList.addItems(os.listdir('themes'))
+
+    for i in sound_get_dict['sounds']:
+        win.catList.addItem(i[0])
+
+        for x in i:
+            x = os.path.join(i[0], x)
+            if x in hotkeys.values():
+                hotk.hotkeyList.addItem(f'{find_key(hotkeys, x)}\t: {x}')
+
+    
     COMMAND_DICT = {                    # Словарь функций к строковому значению
             lambda: select_move((0, -1)):'select_move_up',      # вверх
             lambda: select_move((0, 1)) :'select_move_down',    # вниз
             lambda: select_move((-1, 0)):'select_move_left',    # влево
             lambda: select_move((1, 0)) :'select_move_right',   # вправо
-            lambda: play_sound('')      :'play_sound',          # Играть
+            lambda: play_sound(os.path.join(menu[select[0]][0], 
+                menu[select[0]][select[1]])):'play_sound',      # Играть
             lambda: sd.stop()           :'stop_sound',          # Остановить
     }
     KEYS_JSON = sound_get_dict['KEYS_CMD']# Загрузка настроенных клавиш
@@ -481,28 +517,6 @@ if __name__ == '__main__':
         PREF_BTN[combo].setText(keys.dict_[i])
         combo += 1
 
-    ### Установка хоткеев ###
-    combo = 0
-    for i in hotkeys.items():
-        index = COMBOS[combo].findText(i[1])
-        COMBOS[combo].setCurrentIndex(index)
-        HOTKEYS[combo].setText(i[0])
-        combo += 1
-    combo = None
-
-    HOTKEYS_CMD = [                     # Имена связанные с хоткеями
-        HOTKEYS[0].text(),
-        HOTKEYS[1].text(),
-        HOTKEYS[2].text(),
-        HOTKEYS[3].text(),
-        HOTKEYS[4].text(),
-        HOTKEYS[5].text(),
-        HOTKEYS[6].text(),
-        HOTKEYS[7].text(),
-        HOTKEYS[8].text(),
-        HOTKEYS[9].text(),
-        HOTKEYS[10].text(),
-        HOTKEYS[11].text(),]
-
     main()
+
     sys.exit(app.exec())
