@@ -1,3 +1,4 @@
+
 forbidden = [
     'Key.esc', 'Key.cmd', 'Key.cmd_r', 'Key.menu', 
     'Key.pause', 'Key.scroll_lock', 'Key.print_screen', 
@@ -5,10 +6,11 @@ forbidden = [
     'Key.ctrl_r', 'Key.alt_l', 'Key.alt_gr', 'Key.caps_lock',
     'Key.num_lock', 'Key.tab', 'Key.shift', 'Key.shift_r',
     'Key.insert', 'Key.delete', 'Key.home', 'Key.end', 
-    'Key.page_up', 'Key.page_down', 
+    'Key.page_up', 'Key.page_down', '/' 
 ]
 
 dict_ = {
+    ' ':' ',
     'Key.f1' : 'F1',
     'Key.f2' : 'F2',
     'Key.f3' : 'F3',
@@ -32,5 +34,9 @@ dict_ = {
     '<104>' : 'Num 8',
     '<105>' : 'Num 9',
     '<110>' : 'Num .',
+    'Key.up' : 'Up',
+    'Key.down' : 'Down',
+    'Key.left' : 'Left',
+    'Key.right' : 'Right',
     '\\\\' : '\\'
 }
