@@ -6,10 +6,15 @@ App like [SoundPad](https://www.leppsoft.com/soundpad/en/download/)(needs [Voice
 
 ### Features:
 - Play sound by pressing hotkey
+- Supported formats:
+  - .wav
+  - .mp3
+  - .m4a
 - Converting sounds by [ffmpeg](https://ffmpeg.org/download.html)
 - Sound categories (folders in "sound" folder)
 - Overlay menu by press F1 key
 - Overlay control on numpad (set in preferences)
+- Light and Dark Themes
 
 ### Requirements:
 - [sounddevice](https://pypi.org/project/sounddevice/) for playing sounds
