@@ -14,302 +14,183 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(420, 450)
+        MainWindow.resize(640, 480)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
         MainWindow.setSizePolicy(sizePolicy)
-        MainWindow.setMinimumSize(QtCore.QSize(420, 450))
-        MainWindow.setMaximumSize(QtCore.QSize(420, 450))
+        MainWindow.setMinimumSize(QtCore.QSize(640, 480))
+        MainWindow.setMaximumSize(QtCore.QSize(640, 480))
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("icon.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
-        MainWindow.setStyleSheet("/*background-color: #303030;*/\n"
+        MainWindow.setStyleSheet("#background{\n"
+"    background:rgb(48, 48, 48);\n"
+"}\n"
 "\n"
-"QComboBox::drop-down {\n"
-"    border: 1px solid #D3D3D3;\n"
-"    border-radius: 2px;\n"
-"    background-color: #303030;\n"
-"} \n"
+"QWidget{\n"
+"    background: rgb(44, 44, 44);    \n"
+"    font: 25 14pt \"Calibri Light\";\n"
+"}\n"
 "\n"
-"QComboBox QAbstractItemView{\n"
-"    background-color: #4f4f4f;\n"
-"    color: #999999;\n"
-" \n"
-"    selection-background-color: #999999;\n"
-"    selection-color: #4f4f4f;\n"
+"QPushButton{\n"
+"    background: rgb(58, 58, 58);\n"
+"    border: none;\n"
+"}\n"
+"\n"
+"QPushButton:hover{\n"
+"    background: rgb(53, 53, 53);\n"
+"}\n"
+"\n"
+"QListWidget{\n"
+"    margin: 4px;\n"
+"    border: none;\n"
+"}\n"
+"\n"
+"QListWidget::item[Custom=\"true\"]{\n"
+"    background: rgb(48, 48, 48);\n"
+"}\n"
+"\n"
+"QListWidget::item:hover{\n"
+"    background:  rgb(53, 53, 53);\n"
+"}\n"
+"\n"
+"QListWidget::item:selected{\n"
+"    background: rgb(48, 48, 48);\n"
+"    color: black;\n"
+"}\n"
+"\n"
+"QScrollBar:vertical{\n"
+"    border: 1px transparent rgb(58, 58, 58);\n"
+"    border-radius: 4px;\n"
+"    background: rgb(48, 48, 48);\n"
+"    width: 16px;\n"
+"}\n"
+"\n"
+"QScrollBar::handle:vertical{\n"
+"    background: rgb(58, 58, 58);\n"
+"}\n"
+"\n"
+"QScrollBar::sub-page:vertical{\n"
+"    background: rgb(48, 48, 48);\n"
+"}\n"
+"\n"
+"QScrollBar::add-page:vertical{\n"
+"    background: rgb(48, 48, 48);\n"
 "}")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setEnabled(True)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.centralwidget.sizePolicy().hasHeightForWidth())
-        self.centralwidget.setSizePolicy(sizePolicy)
-        self.centralwidget.setMinimumSize(QtCore.QSize(420, 450))
-        self.centralwidget.setMaximumSize(QtCore.QSize(420, 450))
-        self.centralwidget.setStyleSheet("background-color: #303030")
         self.centralwidget.setObjectName("centralwidget")
-        self.save_button = QtWidgets.QPushButton(self.centralwidget)
-        self.save_button.setGeometry(QtCore.QRect(10, 360, 401, 71))
-        font = QtGui.QFont()
-        font.setFamily("Consolas")
-        font.setPointSize(28)
-        font.setBold(False)
-        font.setWeight(50)
-        font.setStrikeOut(False)
-        font.setKerning(False)
-        self.save_button.setFont(font)
-        self.save_button.setStyleSheet("background-color: #323031;\n"
-"color:  #6b696a;")
-        self.save_button.setDefault(False)
-        self.save_button.setFlat(False)
-        self.save_button.setObjectName("save_button")
-        self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(110, 10, 301, 321))
-        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.combo0 = QtWidgets.QComboBox(self.verticalLayoutWidget)
-        self.combo0.setTabletTracking(False)
-        self.combo0.setAcceptDrops(False)
-        self.combo0.setAutoFillBackground(False)
-        self.combo0.setStyleSheet("background-color: #393738;\n"
-"color:#6b696a;")
-        self.combo0.setDuplicatesEnabled(False)
-        self.combo0.setFrame(False)
-        self.combo0.setObjectName("combo0")
-        self.verticalLayout.addWidget(self.combo0)
-        self.combo1 = QtWidgets.QComboBox(self.verticalLayoutWidget)
-        self.combo1.setTabletTracking(False)
-        self.combo1.setAcceptDrops(False)
-        self.combo1.setAutoFillBackground(False)
-        self.combo1.setStyleSheet("background-color: #393738;\n"
-"color:#6b696a;")
-        self.combo1.setDuplicatesEnabled(False)
-        self.combo1.setFrame(False)
-        self.combo1.setModelColumn(0)
-        self.combo1.setObjectName("combo1")
-        self.verticalLayout.addWidget(self.combo1)
-        self.combo2 = QtWidgets.QComboBox(self.verticalLayoutWidget)
-        self.combo2.setTabletTracking(False)
-        self.combo2.setAcceptDrops(False)
-        self.combo2.setAutoFillBackground(False)
-        self.combo2.setStyleSheet("background-color: #393738;\n"
-"color:#6b696a;")
-        self.combo2.setDuplicatesEnabled(False)
-        self.combo2.setFrame(False)
-        self.combo2.setObjectName("combo2")
-        self.verticalLayout.addWidget(self.combo2)
-        self.combo3 = QtWidgets.QComboBox(self.verticalLayoutWidget)
-        self.combo3.setTabletTracking(False)
-        self.combo3.setAcceptDrops(False)
-        self.combo3.setAutoFillBackground(False)
-        self.combo3.setStyleSheet("background-color: #393738;\n"
-"color:#6b696a;")
-        self.combo3.setDuplicatesEnabled(False)
-        self.combo3.setFrame(False)
-        self.combo3.setObjectName("combo3")
-        self.verticalLayout.addWidget(self.combo3)
-        self.combo4 = QtWidgets.QComboBox(self.verticalLayoutWidget)
-        self.combo4.setTabletTracking(False)
-        self.combo4.setAcceptDrops(False)
-        self.combo4.setAutoFillBackground(False)
-        self.combo4.setStyleSheet("background-color: #393738;\n"
-"color:#6b696a;")
-        self.combo4.setDuplicatesEnabled(False)
-        self.combo4.setFrame(False)
-        self.combo4.setObjectName("combo4")
-        self.verticalLayout.addWidget(self.combo4)
-        self.combo5 = QtWidgets.QComboBox(self.verticalLayoutWidget)
-        self.combo5.setTabletTracking(False)
-        self.combo5.setAcceptDrops(False)
-        self.combo5.setAutoFillBackground(False)
-        self.combo5.setStyleSheet("background-color: #393738;\n"
-"color:#6b696a;")
-        self.combo5.setDuplicatesEnabled(False)
-        self.combo5.setFrame(False)
-        self.combo5.setObjectName("combo5")
-        self.verticalLayout.addWidget(self.combo5)
-        self.combo6 = QtWidgets.QComboBox(self.verticalLayoutWidget)
-        self.combo6.setTabletTracking(False)
-        self.combo6.setAcceptDrops(False)
-        self.combo6.setAutoFillBackground(False)
-        self.combo6.setStyleSheet("background-color: #393738;\n"
-"color:#6b696a;")
-        self.combo6.setDuplicatesEnabled(False)
-        self.combo6.setFrame(False)
-        self.combo6.setObjectName("combo6")
-        self.verticalLayout.addWidget(self.combo6)
-        self.combo7 = QtWidgets.QComboBox(self.verticalLayoutWidget)
-        self.combo7.setTabletTracking(False)
-        self.combo7.setAcceptDrops(False)
-        self.combo7.setAutoFillBackground(False)
-        self.combo7.setStyleSheet("background-color: #393738;\n"
-"color:#6b696a;")
-        self.combo7.setDuplicatesEnabled(False)
-        self.combo7.setFrame(False)
-        self.combo7.setObjectName("combo7")
-        self.verticalLayout.addWidget(self.combo7)
-        self.combo8 = QtWidgets.QComboBox(self.verticalLayoutWidget)
-        self.combo8.setTabletTracking(False)
-        self.combo8.setAcceptDrops(False)
-        self.combo8.setAutoFillBackground(False)
-        self.combo8.setStyleSheet("background-color: #393738;\n"
-"color:#6b696a;")
-        self.combo8.setDuplicatesEnabled(False)
-        self.combo8.setFrame(False)
-        self.combo8.setObjectName("combo8")
-        self.verticalLayout.addWidget(self.combo8)
-        self.combo9 = QtWidgets.QComboBox(self.verticalLayoutWidget)
-        self.combo9.setTabletTracking(False)
-        self.combo9.setAcceptDrops(False)
-        self.combo9.setAutoFillBackground(False)
-        self.combo9.setStyleSheet("background-color: #393738;\n"
-"color:#6b696a;")
-        self.combo9.setDuplicatesEnabled(False)
-        self.combo9.setFrame(False)
-        self.combo9.setObjectName("combo9")
-        self.verticalLayout.addWidget(self.combo9)
-        self.combo10 = QtWidgets.QComboBox(self.verticalLayoutWidget)
-        self.combo10.setTabletTracking(False)
-        self.combo10.setAcceptDrops(False)
-        self.combo10.setAutoFillBackground(False)
-        self.combo10.setStyleSheet("background-color: #393738;\n"
-"color:#6b696a;")
-        self.combo10.setDuplicatesEnabled(False)
-        self.combo10.setFrame(False)
-        self.combo10.setObjectName("combo10")
-        self.verticalLayout.addWidget(self.combo10)
-        self.combo11 = QtWidgets.QComboBox(self.verticalLayoutWidget)
-        self.combo11.setTabletTracking(False)
-        self.combo11.setAcceptDrops(False)
-        self.combo11.setAutoFillBackground(False)
-        self.combo11.setStyleSheet("background-color: #393738;\n"
-"color:#6b696a;")
-        self.combo11.setDuplicatesEnabled(False)
-        self.combo11.setFrame(False)
-        self.combo11.setObjectName("combo11")
-        self.verticalLayout.addWidget(self.combo11)
-        self.verticalLayoutWidget_2 = QtWidgets.QWidget(self.centralwidget)
-        self.verticalLayoutWidget_2.setGeometry(QtCore.QRect(10, 10, 91, 311))
-        self.verticalLayoutWidget_2.setObjectName("verticalLayoutWidget_2")
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.verticalLayoutWidget_2)
-        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.hotkey_1 = QtWidgets.QPushButton(self.verticalLayoutWidget_2)
-        self.hotkey_1.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.hotkey_1.setStyleSheet("text-align: right;\n"
-" color: #6b696a;")
-        self.hotkey_1.setFlat(True)
-        self.hotkey_1.setObjectName("hotkey_1")
-        self.verticalLayout_2.addWidget(self.hotkey_1)
-        self.hotkey_2 = QtWidgets.QPushButton(self.verticalLayoutWidget_2)
-        self.hotkey_2.setStyleSheet("text-align: right;\n"
-" color: #6b696a;")
-        self.hotkey_2.setFlat(True)
-        self.hotkey_2.setObjectName("hotkey_2")
-        self.verticalLayout_2.addWidget(self.hotkey_2)
-        self.hotkey_3 = QtWidgets.QPushButton(self.verticalLayoutWidget_2)
-        self.hotkey_3.setStyleSheet("text-align: right;\n"
-" color: #6b696a;")
-        self.hotkey_3.setFlat(True)
-        self.hotkey_3.setObjectName("hotkey_3")
-        self.verticalLayout_2.addWidget(self.hotkey_3)
-        self.hotkey_4 = QtWidgets.QPushButton(self.verticalLayoutWidget_2)
-        self.hotkey_4.setStyleSheet("text-align: right;\n"
-" color: #6b696a;")
-        self.hotkey_4.setFlat(True)
-        self.hotkey_4.setObjectName("hotkey_4")
-        self.verticalLayout_2.addWidget(self.hotkey_4)
-        self.hotkey_5 = QtWidgets.QPushButton(self.verticalLayoutWidget_2)
-        self.hotkey_5.setStyleSheet("text-align: right;\n"
-" color: #6b696a;")
-        self.hotkey_5.setFlat(True)
-        self.hotkey_5.setObjectName("hotkey_5")
-        self.verticalLayout_2.addWidget(self.hotkey_5)
-        self.hotkey_6 = QtWidgets.QPushButton(self.verticalLayoutWidget_2)
-        self.hotkey_6.setStyleSheet("text-align: right;\n"
-" color: #6b696a;")
-        self.hotkey_6.setFlat(True)
-        self.hotkey_6.setObjectName("hotkey_6")
-        self.verticalLayout_2.addWidget(self.hotkey_6)
-        self.hotkey_7 = QtWidgets.QPushButton(self.verticalLayoutWidget_2)
-        self.hotkey_7.setStyleSheet("text-align: right;\n"
-" color: #6b696a;")
-        self.hotkey_7.setFlat(True)
-        self.hotkey_7.setObjectName("hotkey_7")
-        self.verticalLayout_2.addWidget(self.hotkey_7)
-        self.hotkey_8 = QtWidgets.QPushButton(self.verticalLayoutWidget_2)
-        self.hotkey_8.setStyleSheet("text-align: right;\n"
-" color: #6b696a;")
-        self.hotkey_8.setFlat(True)
-        self.hotkey_8.setObjectName("hotkey_8")
-        self.verticalLayout_2.addWidget(self.hotkey_8)
-        self.hotkey_9 = QtWidgets.QPushButton(self.verticalLayoutWidget_2)
-        self.hotkey_9.setStyleSheet("text-align: right;\n"
-" color: #6b696a;")
-        self.hotkey_9.setFlat(True)
-        self.hotkey_9.setObjectName("hotkey_9")
-        self.verticalLayout_2.addWidget(self.hotkey_9)
-        self.hotkey_10 = QtWidgets.QPushButton(self.verticalLayoutWidget_2)
-        self.hotkey_10.setStyleSheet("text-align: right;\n"
-" color: #6b696a;")
-        self.hotkey_10.setFlat(True)
-        self.hotkey_10.setObjectName("hotkey_10")
-        self.verticalLayout_2.addWidget(self.hotkey_10)
-        self.hotkey_11 = QtWidgets.QPushButton(self.verticalLayoutWidget_2)
-        self.hotkey_11.setStyleSheet("text-align: right;\n"
-" color: #6b696a;")
-        self.hotkey_11.setFlat(True)
-        self.hotkey_11.setObjectName("hotkey_11")
-        self.verticalLayout_2.addWidget(self.hotkey_11)
-        self.hotkey_12 = QtWidgets.QPushButton(self.verticalLayoutWidget_2)
-        self.hotkey_12.setStyleSheet("text-align: right;\n"
-" color: #6b696a;")
-        self.hotkey_12.setFlat(True)
-        self.hotkey_12.setObjectName("hotkey_12")
-        self.verticalLayout_2.addWidget(self.hotkey_12)
-        self.info_label = QtWidgets.QLabel(self.centralwidget)
-        self.info_label.setGeometry(QtCore.QRect(10, 430, 401, 20))
-        font = QtGui.QFont()
-        font.setFamily("Consolas")
-        self.info_label.setFont(font)
-        self.info_label.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.info_label.setStyleSheet("color: #505050;")
-        self.info_label.setMidLineWidth(0)
-        self.info_label.setObjectName("info_label")
+        self.play_button = QtWidgets.QPushButton(self.centralwidget)
+        self.play_button.setGeometry(QtCore.QRect(0, 70, 171, 41))
+        self.play_button.setStyleSheet("")
+        self.play_button.setFlat(False)
+        self.play_button.setObjectName("play_button")
+        self.stop_button = QtWidgets.QPushButton(self.centralwidget)
+        self.stop_button.setGeometry(QtCore.QRect(0, 120, 171, 41))
+        self.stop_button.setStyleSheet("")
+        self.stop_button.setDefault(False)
+        self.stop_button.setFlat(False)
+        self.stop_button.setObjectName("stop_button")
         self.select_label = QtWidgets.QLabel(self.centralwidget)
-        self.select_label.setGeometry(QtCore.QRect(10, 320, 401, 41))
-        self.select_label.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.select_label.setStyleSheet("background-color: black;")
+        self.select_label.setGeometry(QtCore.QRect(0, 30, 641, 31))
+        self.select_label.setStyleSheet("background:black;\n"
+"color: white;")
         self.select_label.setText("")
         self.select_label.setAlignment(QtCore.Qt.AlignCenter)
         self.select_label.setObjectName("select_label")
+        self.hkset = QtWidgets.QPushButton(self.centralwidget)
+        self.hkset.setGeometry(QtCore.QRect(0, 190, 171, 41))
+        self.hkset.setObjectName("hkset")
+        self.catList = QtWidgets.QListWidget(self.centralwidget)
+        self.catList.setGeometry(QtCore.QRect(10, 270, 151, 201))
+        self.catList.setStyleSheet("QListWidget::item{\n"
+"    padding: 6px;\n"
+"}")
+        self.catList.setObjectName("catList")
+        self.soundList = QtWidgets.QListWidget(self.centralwidget)
+        self.soundList.setGeometry(QtCore.QRect(170, 60, 471, 421))
+        self.soundList.setObjectName("soundList")
+        self.pref_button = QtWidgets.QPushButton(self.centralwidget)
+        self.pref_button.setGeometry(QtCore.QRect(0, 0, 111, 31))
+        self.pref_button.setStyleSheet("QPushButton{\n"
+"    margin-bottom: 1px;\n"
+"}\n"
+"\n"
+"QPushButton:hover{\n"
+"    color: black;\n"
+"    background: rgba(194, 213, 254, 128);\n"
+"}")
+        self.pref_button.setObjectName("pref_button")
+        self.hotkeys_button = QtWidgets.QPushButton(self.centralwidget)
+        self.hotkeys_button.setGeometry(QtCore.QRect(110, 0, 111, 31))
+        self.hotkeys_button.setStyleSheet("QPushButton{\n"
+"    margin-bottom: 1px;\n"
+"}\n"
+"\n"
+"QPushButton:hover{\n"
+"    color: black;\n"
+"    background: rgba(194, 213, 254, 128);\n"
+"}")
+        self.hotkeys_button.setObjectName("hotkeys_button")
+        self.exit_button = QtWidgets.QPushButton(self.centralwidget)
+        self.exit_button.setGeometry(QtCore.QRect(600, 0, 41, 31))
+        self.exit_button.setStyleSheet("QPushButton{\n"
+"    margin-bottom: 1px;\n"
+"}\n"
+"\n"
+"QPushButton:hover{\n"
+"    color: black;\n"
+"    background: rgba(254, 119, 122, 128);\n"
+"}")
+        self.exit_button.setObjectName("exit_button")
+        self.min_button = QtWidgets.QPushButton(self.centralwidget)
+        self.min_button.setGeometry(QtCore.QRect(560, 0, 41, 31))
+        self.min_button.setStyleSheet("QPushButton{\n"
+"    margin-bottom: 1px;\n"
+"}\n"
+"\n"
+"QPushButton:hover{\n"
+"    color: black;\n"
+"    background: rgba(194, 213, 254, 128);\n"
+"}")
+        self.min_button.setObjectName("min_button")
+        self.background = QtWidgets.QWidget(self.centralwidget)
+        self.background.setGeometry(QtCore.QRect(0, -10, 641, 491))
+        self.background.setStyleSheet("")
+        self.background.setObjectName("background")
+        self.label = QtWidgets.QLabel(self.background)
+        self.label.setGeometry(QtCore.QRect(10, 250, 151, 21))
+        self.label.setStyleSheet("background: none;")
+        self.label.setAlignment(QtCore.Qt.AlignCenter)
+        self.label.setObjectName("label")
+        self.background.raise_()
+        self.play_button.raise_()
+        self.stop_button.raise_()
+        self.select_label.raise_()
+        self.hkset.raise_()
+        self.catList.raise_()
+        self.soundList.raise_()
+        self.pref_button.raise_()
+        self.hotkeys_button.raise_()
+        self.exit_button.raise_()
+        self.min_button.raise_()
         MainWindow.setCentralWidget(self.centralwidget)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-        self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+        self.actionPreferences = QtWidgets.QAction(MainWindow)
+        self.actionPreferences.setObjectName("actionPreferences")
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "SundPood"))
-        self.save_button.setText(_translate("MainWindow", "Save"))
-        self.hotkey_1.setText(_translate("MainWindow", "f1"))
-        self.hotkey_2.setText(_translate("MainWindow", "PushButton"))
-        self.hotkey_3.setText(_translate("MainWindow", "PushButton"))
-        self.hotkey_4.setText(_translate("MainWindow", "PushButton"))
-        self.hotkey_5.setText(_translate("MainWindow", "PushButton"))
-        self.hotkey_6.setText(_translate("MainWindow", "PushButton"))
-        self.hotkey_7.setText(_translate("MainWindow", "PushButton"))
-        self.hotkey_8.setText(_translate("MainWindow", "PushButton"))
-        self.hotkey_9.setText(_translate("MainWindow", "PushButton"))
-        self.hotkey_10.setText(_translate("MainWindow", "PushButton"))
-        self.hotkey_11.setText(_translate("MainWindow", "PushButton"))
-        self.hotkey_12.setText(_translate("MainWindow", "PushButton"))
-        self.info_label.setText(_translate("MainWindow", "Press F1 to open overlay"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Sundpood"))
+        self.play_button.setText(_translate("MainWindow", "Play"))
+        self.stop_button.setText(_translate("MainWindow", "Stop"))
+        self.hkset.setText(_translate("MainWindow", "Set Hotkey"))
+        self.pref_button.setText(_translate("MainWindow", "Settings"))
+        self.hotkeys_button.setText(_translate("MainWindow", "Hotkeys"))
+        self.exit_button.setText(_translate("MainWindow", "X"))
+        self.min_button.setText(_translate("MainWindow", "-"))
+        self.label.setText(_translate("MainWindow", "Categories"))
+        self.actionPreferences.setText(_translate("MainWindow", "Preferences"))

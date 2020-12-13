@@ -25,80 +25,173 @@ class Ui_MainWindow(object):
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("icon.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
+        MainWindow.setStyleSheet("#background{\n"
+"    background:rgb(48, 48, 48);\n"
+"}\n"
+"\n"
+"QWidget{\n"
+"    background: rgb(44, 44, 44);    \n"
+"    font: 25 14pt \"Calibri Light\";\n"
+"}\n"
+"\n"
+"QPushButton{\n"
+"    background: rgb(58, 58, 58);\n"
+"    border: none;\n"
+"}\n"
+"\n"
+"QPushButton:hover{\n"
+"    background: rgb(53, 53, 53);\n"
+"}\n"
+"\n"
+"QListWidget{\n"
+"    margin: 4px;\n"
+"    border: none;\n"
+"}\n"
+"\n"
+"QListWidget::item[Custom=\"true\"]{\n"
+"    background: rgb(48, 48, 48);\n"
+"}\n"
+"\n"
+"QListWidget::item:hover{\n"
+"    background:  rgb(53, 53, 53);\n"
+"}\n"
+"\n"
+"QListWidget::item:selected{\n"
+"    background: rgb(48, 48, 48);\n"
+"    color: black;\n"
+"}\n"
+"\n"
+"QScrollBar:vertical{\n"
+"    border: 1px transparent rgb(58, 58, 58);\n"
+"    border-radius: 4px;\n"
+"    background: rgb(48, 48, 48);\n"
+"    width: 16px;\n"
+"}\n"
+"\n"
+"QScrollBar::handle:vertical{\n"
+"    background: rgb(48, 48, 48);\n"
+"}\n"
+"\n"
+"QScrollBar::sub-page:vertical{\n"
+"    background: rgb(58, 58, 58);\n"
+"}\n"
+"\n"
+"QScrollBar::add-page:vertical{\n"
+"    background: rgb(58, 58, 58);\n"
+"}")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
-        self.tabWidget.setGeometry(QtCore.QRect(0, 0, 421, 461))
-        self.tabWidget.setObjectName("tabWidget")
-        self.Keys = QtWidgets.QWidget()
-        self.Keys.setObjectName("Keys")
-        self.gridLayoutWidget = QtWidgets.QWidget(self.Keys)
-        self.gridLayoutWidget.setGeometry(QtCore.QRect(10, 10, 391, 271))
+        self.exit_button = QtWidgets.QPushButton(self.centralwidget)
+        self.exit_button.setGeometry(QtCore.QRect(380, 0, 41, 31))
+        self.exit_button.setStyleSheet("QPushButton{\n"
+"    margin-bottom: 1px;\n"
+"}\n"
+"\n"
+"QPushButton:hover{\n"
+"    color: black;\n"
+"    background: #fe777a;\n"
+"}")
+        self.exit_button.setObjectName("exit_button")
+        self.min_button = QtWidgets.QPushButton(self.centralwidget)
+        self.min_button.setGeometry(QtCore.QRect(340, 0, 41, 31))
+        self.min_button.setStyleSheet("QPushButton{\n"
+"    margin-bottom: 1px;\n"
+"}\n"
+"\n"
+"QPushButton:hover{\n"
+"    color: black;\n"
+"    background: #c2d5fe;\n"
+"}")
+        self.min_button.setObjectName("min_button")
+        self.gridLayoutWidget = QtWidgets.QWidget(self.centralwidget)
+        self.gridLayoutWidget.setGeometry(QtCore.QRect(10, 70, 391, 211))
         self.gridLayoutWidget.setObjectName("gridLayoutWidget")
         self.gridLayout = QtWidgets.QGridLayout(self.gridLayoutWidget)
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.gridLayout.setHorizontalSpacing(6)
         self.gridLayout.setObjectName("gridLayout")
-        self.label = QtWidgets.QLabel(self.gridLayoutWidget)
-        self.label.setObjectName("label")
-        self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
-        self.select_move_down = QtWidgets.QPushButton(self.gridLayoutWidget)
-        self.select_move_down.setObjectName("select_move_down")
-        self.gridLayout.addWidget(self.select_move_down, 1, 1, 1, 1)
-        self.label_2 = QtWidgets.QLabel(self.gridLayoutWidget)
-        self.label_2.setObjectName("label_2")
-        self.gridLayout.addWidget(self.label_2, 1, 0, 1, 1)
+        self.label_8 = QtWidgets.QLabel(self.gridLayoutWidget)
+        self.label_8.setStyleSheet("background:none")
+        self.label_8.setObjectName("label_8")
+        self.gridLayout.addWidget(self.label_8, 0, 0, 1, 1)
         self.label_5 = QtWidgets.QLabel(self.gridLayoutWidget)
         self.label_5.setObjectName("label_5")
-        self.gridLayout.addWidget(self.label_5, 4, 0, 1, 1)
-        self.select_move_up = QtWidgets.QPushButton(self.gridLayoutWidget)
-        self.select_move_up.setObjectName("select_move_up")
-        self.gridLayout.addWidget(self.select_move_up, 0, 1, 1, 1)
-        self.label_4 = QtWidgets.QLabel(self.gridLayoutWidget)
-        self.label_4.setObjectName("label_4")
-        self.gridLayout.addWidget(self.label_4, 3, 0, 1, 1)
-        self.label_3 = QtWidgets.QLabel(self.gridLayoutWidget)
-        self.label_3.setObjectName("label_3")
-        self.gridLayout.addWidget(self.label_3, 2, 0, 1, 1)
-        self.label_6 = QtWidgets.QLabel(self.gridLayoutWidget)
-        self.label_6.setObjectName("label_6")
-        self.gridLayout.addWidget(self.label_6, 5, 0, 1, 1)
-        self.select_move_left = QtWidgets.QPushButton(self.gridLayoutWidget)
-        self.select_move_left.setObjectName("select_move_left")
-        self.gridLayout.addWidget(self.select_move_left, 2, 1, 1, 1)
+        self.gridLayout.addWidget(self.label_5, 5, 0, 1, 1)
+        self.label_2 = QtWidgets.QLabel(self.gridLayoutWidget)
+        self.label_2.setObjectName("label_2")
+        self.gridLayout.addWidget(self.label_2, 2, 0, 1, 1)
+        self.select_move_down = QtWidgets.QPushButton(self.gridLayoutWidget)
+        self.select_move_down.setObjectName("select_move_down")
+        self.gridLayout.addWidget(self.select_move_down, 2, 1, 1, 1)
         self.select_move_right = QtWidgets.QPushButton(self.gridLayoutWidget)
         self.select_move_right.setObjectName("select_move_right")
-        self.gridLayout.addWidget(self.select_move_right, 3, 1, 1, 1)
-        self.play_sound = QtWidgets.QPushButton(self.gridLayoutWidget)
-        self.play_sound.setObjectName("play_sound")
-        self.gridLayout.addWidget(self.play_sound, 4, 1, 1, 1)
+        self.gridLayout.addWidget(self.select_move_right, 4, 1, 1, 1)
+        self.select_move_up = QtWidgets.QPushButton(self.gridLayoutWidget)
+        self.select_move_up.setObjectName("select_move_up")
+        self.gridLayout.addWidget(self.select_move_up, 1, 1, 1, 1)
+        self.label_3 = QtWidgets.QLabel(self.gridLayoutWidget)
+        self.label_3.setObjectName("label_3")
+        self.gridLayout.addWidget(self.label_3, 3, 0, 1, 1)
         self.stop_sound = QtWidgets.QPushButton(self.gridLayoutWidget)
         self.stop_sound.setObjectName("stop_sound")
-        self.gridLayout.addWidget(self.stop_sound, 5, 1, 1, 1)
-        self.tabWidget.addTab(self.Keys, "")
-        self.tab_2 = QtWidgets.QWidget()
-        self.tab_2.setObjectName("tab_2")
-        self.tabWidget.addTab(self.tab_2, "")
+        self.gridLayout.addWidget(self.stop_sound, 6, 1, 1, 1)
+        self.label_6 = QtWidgets.QLabel(self.gridLayoutWidget)
+        self.label_6.setObjectName("label_6")
+        self.gridLayout.addWidget(self.label_6, 6, 0, 1, 1)
+        self.label_4 = QtWidgets.QLabel(self.gridLayoutWidget)
+        self.label_4.setObjectName("label_4")
+        self.gridLayout.addWidget(self.label_4, 4, 0, 1, 1)
+        self.select_move_left = QtWidgets.QPushButton(self.gridLayoutWidget)
+        self.select_move_left.setObjectName("select_move_left")
+        self.gridLayout.addWidget(self.select_move_left, 3, 1, 1, 1)
+        self.label = QtWidgets.QLabel(self.gridLayoutWidget)
+        self.label.setObjectName("label")
+        self.gridLayout.addWidget(self.label, 1, 0, 1, 1)
+        self.play_sound = QtWidgets.QPushButton(self.gridLayoutWidget)
+        self.play_sound.setObjectName("play_sound")
+        self.gridLayout.addWidget(self.play_sound, 5, 1, 1, 1)
+        self.background = QtWidgets.QWidget(self.centralwidget)
+        self.background.setGeometry(QtCore.QRect(0, 0, 421, 71))
+        self.background.setStyleSheet("")
+        self.background.setObjectName("background")
+        self.label_7 = QtWidgets.QLabel(self.background)
+        self.label_7.setGeometry(QtCore.QRect(10, 10, 161, 41))
+        self.label_7.setStyleSheet("background: none")
+        self.label_7.setObjectName("label_7")
+        self.label_9 = QtWidgets.QLabel(self.centralwidget)
+        self.label_9.setGeometry(QtCore.QRect(10, 290, 201, 31))
+        self.label_9.setObjectName("label_9")
+        self.themesList = QtWidgets.QListWidget(self.centralwidget)
+        self.themesList.setGeometry(QtCore.QRect(10, 330, 401, 131))
+        self.themesList.setObjectName("themesList")
+        self.background.raise_()
+        self.exit_button.raise_()
+        self.min_button.raise_()
+        self.gridLayoutWidget.raise_()
+        self.label_9.raise_()
+        self.themesList.raise_()
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label.setText(_translate("MainWindow", "Overlay menu up"))
-        self.select_move_down.setText(_translate("MainWindow", "PushButton"))
-        self.label_2.setText(_translate("MainWindow", "Overlay menu down"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Preferences"))
+        self.exit_button.setText(_translate("MainWindow", "X"))
+        self.min_button.setText(_translate("MainWindow", "-"))
+        self.label_8.setText(_translate("MainWindow", "Overlay control"))
         self.label_5.setText(_translate("MainWindow", "Overlay play sound"))
-        self.select_move_up.setText(_translate("MainWindow", "PushButton"))
-        self.label_4.setText(_translate("MainWindow", "Overlay menu right"))
-        self.label_3.setText(_translate("MainWindow", "Overlay menu left"))
-        self.label_6.setText(_translate("MainWindow", "Overlay stop sound"))
-        self.select_move_left.setText(_translate("MainWindow", "PushButton"))
+        self.label_2.setText(_translate("MainWindow", "Overlay menu down"))
+        self.select_move_down.setText(_translate("MainWindow", "PushButton"))
         self.select_move_right.setText(_translate("MainWindow", "PushButton"))
-        self.play_sound.setText(_translate("MainWindow", "PushButton"))
+        self.select_move_up.setText(_translate("MainWindow", "PushButton"))
+        self.label_3.setText(_translate("MainWindow", "Overlay menu left"))
         self.stop_sound.setText(_translate("MainWindow", "PushButton"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.Keys), _translate("MainWindow", "Tab 1"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "Tab 2"))
+        self.label_6.setText(_translate("MainWindow", "Overlay stop sound"))
+        self.label_4.setText(_translate("MainWindow", "Overlay menu right"))
+        self.select_move_left.setText(_translate("MainWindow", "PushButton"))
+        self.label.setText(_translate("MainWindow", "Overlay menu up"))
+        self.play_sound.setText(_translate("MainWindow", "PushButton"))
+        self.label_7.setText(_translate("MainWindow", "Preferences"))
+        self.label_9.setText(_translate("MainWindow", "Themes"))
