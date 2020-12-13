@@ -1,6 +1,6 @@
 # Sundpood
 
-![Banner](https://github.com/Ninnjah/Sundpood/blob/master/banner.jpg)
+![Banner](https://github.com/Ninnjah/Sundpood/blob/master/pics/banner.jpg)
 
 App like [SoundPad](https://www.leppsoft.com/soundpad/en/download/)(needs [VoiceMeeter](https://vb-audio.com/Voicemeeter/)(allready in "redist" folder))
 
