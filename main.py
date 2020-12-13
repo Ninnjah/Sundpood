@@ -129,7 +129,7 @@ def toggle_stylesheet(path):
     file.open(QFile.ReadOnly | QFile.Text)
     stream = QTextStream(file)
     theme = stream.readAll()
-    
+
     pref.setStyleSheet(theme)
     win.setStyleSheet(theme)
     hotk.setStyleSheet(theme)
@@ -209,8 +209,8 @@ def get_files(dir_, config):
                 name = os.path.join(dir_, i)
                 if name == None:
                     sounds_list.append(i)
-                elif os.path.splitext(name)[1] in ['.mp3', '.m4a', '.wav']:
-                    sounds_list.append(name)
+                elif os.path.splitext(i)[1] in ['.mp3', '.m4a', '.wav']:
+                    sounds_list.append(i)
             else:
                 sounds_list_cat = [os.path.join(dir_, i)]
                 for x in os.listdir(os.path.join(dir_, i)):
