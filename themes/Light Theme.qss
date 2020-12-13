@@ -1,0 +1,54 @@
+#background{
+    background:rgb(248, 248, 248);
+}
+
+QWidget{
+    background: white;    
+    font: 25 14pt "Calibri Light";
+}
+
+QPushButton{
+    background: #eee;
+    border: none;
+}
+
+QPushButton:hover{
+    background: #f4f4f4;
+}
+
+QListWidget{
+    margin: 4px;
+    border: none;
+}
+
+QListWidget::item[Custom="true"]{
+    background: #eee;
+}
+
+QListWidget::item:hover{
+    background: #f4f4f4;
+}
+
+QListWidget::item:selected{
+    background: #eee;
+    color: black;
+}
+
+QScrollBar:vertical{
+    border: 1px transparent #eee;
+    border-radius: 4px;
+    background: #eaeaea;
+    width: 16px;
+}
+
+QScrollBar::handle:vertical{
+    background: #eee;
+}
+
+QScrollBar::sub-page:vertical{
+    background: #f8f8f8;
+}
+
+QScrollBar::add-page:vertical{
+    background: #f8f8f8;
+}
