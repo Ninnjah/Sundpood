@@ -27,4 +27,7 @@ def decrypt(filename, key):
     
     return decrypted_data.decode('utf-8')
 
-exec(decrypt(os.path.join('data', 'sundpood-runtime.sr') , key.KEY))
+if os.path.exists(os.path.join('data', 'main.py')):
+    exec(os.path.join('data', 'main.py'))
+else:
+    exec(decrypt(os.path.join('data', 'sundpood-runtime.sr') , key.KEY))
