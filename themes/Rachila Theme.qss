@@ -1,0 +1,120 @@
+QWidget{
+    background: rgb(70, 54, 80);    
+    font: 25 14pt \"Calibri Light\";
+}
+
+QLabel{
+    background: none;
+}
+
+QPushButton{
+    color: rgb(35, 17, 22);
+    background: rgb(237, 120, 153);
+    border: none;
+}
+
+QPushButton:hover{
+    background: rgb(182, 92, 118);
+}
+
+QListWidget{
+    margin: 4px;
+    border: none;
+}
+QListWidget::item[Custom=\"true\"]{
+    background: rgb(48, 48, 48);
+}
+QListWidget::item:hover{
+    background: rgb(182, 92, 118);
+}
+QListWidget::item:selected{
+    background: rgb(47, 41, 50);
+    color: white;
+}
+
+QScrollBar:vertical{
+    border: 1px transparent rgb(237, 120, 153);
+    border-radius: 4px;
+    background: rgb(48, 48, 48);
+    width: 16px;
+}
+QScrollBar::handle:vertical{
+    background: rgb(48, 48, 48);
+}
+QScrollBar::sub-page:vertical{
+    background: rgb(188, 87, 116);
+}
+QScrollBar::add-page:vertical{
+    background: rgb(99, 70, 114);
+}
+
+QSlider::groove:horizontal {
+    border: none;
+    background: none;
+    height: 40px;
+    margin: -1px;
+}
+QSlider::handle:horizontal {
+    background-color: rgb(237, 120, 153);
+    border: none;
+    height: 40px;
+    width: 40px;
+    margin: -15px 0px;
+}
+QSlider::sub-page:horizontal {
+    border: none;
+    height: 40px;
+    background: rgb(188, 87, 116);
+}
+QSlider::add-page:horizontal {
+    border: none;
+    height: 40px;
+    background: rgb(99, 70, 114);
+}
+
+#background{
+    background: rgb(146, 111, 163);
+}
+
+#exit_button{
+    margin-bottom: 1px;
+}
+
+#min_button{
+    margin-bottom: 1px;
+}
+
+#pref_button{
+    background: none;
+    margin-bottom: 1px;
+}
+#pref_button:hover{
+    background: rgba(70, 54, 80, 128);
+}
+
+#hotkeys_button{
+    background: none;
+    margin-bottom: 1px;
+}
+#hotkeys_button:hover{
+    background: rgba(70, 54, 80, 128);
+}
+
+#select_label{
+    background: rgb(32, 25, 36);
+    color: rgb(237, 120, 153);
+}
+
+#catList::item{
+    padding: 6px;
+}
+
+#title{
+    color: rgb(237, 120, 153);
+}
+#pref_over{
+    color: rgb(237, 120, 153);
+}
+#pref_themes{
+    color: rgb(237, 120, 153);
+}
