@@ -14,7 +14,6 @@ from data import ui_hotkeys
 from data import ui_sundpood
 from data import ui_overlay
 from data import keys
-import themes
 ### ^^^                                    ^^^ ###
 
 def decrypt(filename, key):
@@ -28,6 +27,7 @@ def decrypt(filename, key):
     return decrypted_data.decode('utf-8')
 
 if os.path.exists(os.path.join('data', 'main.py')):
-    exec(os.path.join('data', 'main.py'))
+    with open(os.path.join('data', 'main.py'), 'r', encoding='utf-8') as f:
+        exec(f.read())
 else:
     exec(decrypt(os.path.join('data', 'sundpood-runtime.sr') , key.KEY))
