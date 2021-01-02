@@ -17,6 +17,9 @@ class Ui_MainWindow(object):
         MainWindow.resize(640, 480)
         MainWindow.setMinimumSize(QtCore.QSize(640, 480))
         MainWindow.setMaximumSize(QtCore.QSize(640, 480))
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("icon.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        MainWindow.setWindowIcon(icon)
         MainWindow.setStyleSheet("QWidget{\n"
 "    background: rgb(44, 44, 44);    \n"
 "    font: 25 14pt \"Calibri Light\";\n"
@@ -128,10 +131,6 @@ class Ui_MainWindow(object):
 "    height: 40px;\n"
 "    margin: 1px;\n"
 "    background: rgb(63, 63, 63);\n"
-"}\n"
-"\n"
-"#update_button:hover{\n"
-"    background:rgba(10, 128, 179, 128);\n"
 "}")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -168,17 +167,17 @@ class Ui_MainWindow(object):
         self.catList.setGeometry(QtCore.QRect(0, 280, 171, 201))
         self.catList.setStyleSheet("")
         self.catList.setObjectName("catList")
-        self.label = QtWidgets.QLabel(self.background)
-        self.label.setGeometry(QtCore.QRect(6, 253, 161, 31))
+        self.cat_label = QtWidgets.QLabel(self.background)
+        self.cat_label.setGeometry(QtCore.QRect(6, 253, 161, 31))
         font = QtGui.QFont()
         font.setFamily("Calibri Light")
         font.setPointSize(14)
         font.setBold(False)
         font.setItalic(False)
         font.setWeight(3)
-        self.label.setFont(font)
-        self.label.setAlignment(QtCore.Qt.AlignCenter)
-        self.label.setObjectName("label")
+        self.cat_label.setFont(font)
+        self.cat_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.cat_label.setObjectName("cat_label")
         self.volume_slider = QtWidgets.QSlider(self.background)
         self.volume_slider.setGeometry(QtCore.QRect(10, 170, 151, 20))
         self.volume_slider.setMaximum(100)
@@ -208,5 +207,5 @@ class Ui_MainWindow(object):
         self.hotkeys_button.setText(_translate("MainWindow", "Hotkeys"))
         self.stop_button.setText(_translate("MainWindow", "Stop"))
         self.hkset.setText(_translate("MainWindow", "Set hotkey"))
-        self.label.setText(_translate("MainWindow", "Categories"))
+        self.cat_label.setText(_translate("MainWindow", "Categories"))
         self.play_button.setText(_translate("MainWindow", "Play"))
