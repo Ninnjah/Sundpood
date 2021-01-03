@@ -19,12 +19,15 @@ App like [SoundPad](https://www.leppsoft.com/soundpad/en/download/)(needs [Voice
 
 ### Screenshots
 - Light Theme
+
 ![light theme](https://github.com/Ninnjah/Sundpood/blob/master/pics/Light%20theme.png)
 ---
 - Dark Theme
+
 ![light theme](https://github.com/Ninnjah/Sundpood/blob/master/pics/Dark%20theme.png)
 ---
 - Rachila Theme
+
 ![light theme](https://github.com/Ninnjah/Sundpood/blob/master/pics/Rachila%20theme.png)
 ---
 
